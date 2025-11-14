@@ -1,0 +1,22 @@
+[
+    {
+        "id": 1,
+        "agent": "Douglas Oliveira",
+        "phone": "+5535998723079"
+    },
+    {
+        "id": 2,
+        "agent": "Aldriely Lima",
+        "phone": "+5513997687435"
+    },
+    {
+        "id": 3,
+        "agent": "Rosilene Mendes",
+        "phone": "+5535988629435"
+    },
+    {
+        "id": 4,
+        "agent": "Danielle Oliveira",
+        "phone": "+5535991403068"
+    }
+]

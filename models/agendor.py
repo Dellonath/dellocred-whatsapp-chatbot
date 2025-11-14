@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 _log = logging.getLogger(__name__)
-logging.basicConfig(filename='logs/contacts.log',
+logging.basicConfig(filename='logs/agendor.log',
                     format='%(asctime)s.%(msecs)03d %(levelname)s %(message)s',
                     filemode='a',
                     datefmt='%Y-%m-%d %H:%M:%S',
