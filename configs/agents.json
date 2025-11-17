@@ -1,22 +1,35 @@
 [
     {
-        "id": 1,
-        "agent": "Douglas Oliveira",
-        "phone": "+5535998723079"
+        "id": 933092,
+        "name": "Douglas Oliveira",
+        "creds": {
+            "instance_id": "WAPI_INSTANCE_ID_DOLIV_TEST",
+            "instance_token": "WAPI_INSTANCE_TOKEN_DOLIV_TEST"
+        }
     },
     {
-        "id": 2,
-        "agent": "Aldriely Lima",
-        "phone": "+5513997687435"
+        "id": 938214,
+        "name": "Aldriely Lima",
+        "creds": {
+            "instance_id": "WAPI_INSTANCE_ID_ALIMA",
+            "instance_token": "WAPI_INSTANCE_TOKEN_ALIMA"
+        }
     },
     {
-        "id": 3,
-        "agent": "Rosilene Mendes",
-        "phone": "+5535988629435"
+        "id": 932790,
+        "name": "Rosilene Mendes",
+        "creds": {
+            "instance_id": "WAPI_INSTANCE_ID_RMEND",
+            "instance_token": "WAPI_INSTANCE_TOKEN_RMEND"
+            
+        }
     },
     {
-        "id": 4,
-        "agent": "Danielle Oliveira",
-        "phone": "+5535991403068"
+        "id": 942496,
+        "name": "Danielle Oliveira",
+        "creds": {
+            "instance_id": "WAPI_INSTANCE_ID_DOLIV",
+            "instance_token": "WAPI_INSTANCE_TOKEN_DOLIV"
+        }
     }
 ]

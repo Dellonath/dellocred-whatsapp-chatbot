@@ -1,0 +1,98 @@
+[
+    {
+        "id": 1,
+        "description": "Disparo de mensagem de crédito Banco do Brasil",
+        "actions": [
+            {
+                "type": "send_message",
+                "message": "Olá, tudo bem? Sou {{agent.first_name}}, consultora especialista de crédito da Dellocred, autorizada do Banco do Brasil. Falo com {{client.first_name}}? \n\nVi uma possível oportunidade de crédito no seu nome e gostaria de saber gostaria de receber uma simulação sem compromisso.",
+                "delay": 2
+            },
+            {
+                "type": "send_audio",
+                "audio_url": "https://audio.jukehost.co.uk/WfDsaBkFCOVJW8ogPb8G9Wh7J2w6TClM.ogg"
+            },
+            {
+                "type": "webhook",
+                "endpoint": "https://api.agendor.com.br/v3/people/upsert",
+                "payload": "{'cpf': '{{client.cpf}}', 'category': 'Aguardando retorno', 'customFields': {'contato_via': 'Disparo'}}"
+            }
+        ]
+    },
+    {
+        "id": 2,
+        "description": "Disparo de áudio de crédito Banco do Brasil",
+        "actions": [
+            {
+                "type": "send_audio",
+                "audio_url": "https://audio.jukehost.co.uk/qCcIBfdY7LKWq9dOdgmA3mFqLzH4qxuC.ogg"
+            },
+            {
+                "type": "wait",
+                "seconds": 5
+            },
+            {
+                "type": "send_audio",
+                "audio_url": "https://audio.jukehost.co.uk/X7XLmZTpSSIFdF6Lef2PxLD3clJY8HMg.ogg"
+            },
+            {
+                "type": "webhook",
+                "endpoint": "https://api.agendor.com.br/v3/people/upsert",
+                "payload": "{'cpf': '{{client.cpf}}', 'category': 'Aguardando retorno', 'customFields': {'contato_via': 'Disparo'}}"
+            }
+        ]
+    },
+    {
+        "id": 3,
+        "description": "Disparo de oportunidade para portabilidade",
+        "actions": [
+            {
+                "type": "send_message",
+                "message": "Olá, tudo bem? Sou a {{agent.first_name}}, consultora multibanco especialista em crédito da Dellocred.\n\n*Está sem margem? Tenho uma solução para você!* \n\nA portabilidade para outro banco permite manter as parcelas e receber um troco por isso. Tudo em ambiente seguro. Pra agilizar, me envie um *extrato de consignado* para uma simulação sem compromisso, onde posso te explicar melhor. \n\n*Obs. cuidado com golpes! NENHUM pagamento ou depósito será cobrado para essa atividade.*"
+            },
+            {
+                "type": "send_audio",
+                "audio_url": "https://audio.jukehost.co.uk/WfDsaBkFCOVJW8ogPb8G9Wh7J2w6TClM.ogg"
+            }
+        ]
+    },
+    {
+        "id": 4,
+        "description": "Disparo de botão com ação",
+        "actions": [
+            {
+                "type": "send_message",
+                "message": "Olá, tudo bem? Sou {{client.first_name}} e estou testando a API."
+            },
+            {
+                "type": "wait",
+                "seconds": 5
+            },
+            {
+                "type": "send_button_actions",
+                "message": "Texto da mensagem",
+                "buttons": [
+                    {
+                        "type": "CALL",
+                        "button_text": "Entrar em contato",
+                        "phone": "+559992249708"
+                    },
+                    {
+                        "type": "URL", 
+                        "button_text": "Visite nosso Site",
+                        "url": "https://w-api.app"
+                    },
+                    {
+                        "type": "URL", 
+                        "button_text": "Simule agora mesmo!",
+                        "url": "https://wa.me/5535998723079?text=Ol%C3%A1%2C%20quero%20simular!"
+                    },
+                    {
+                        "type": "REPLAY",
+                        "button_text": "Não perturbe"
+                    }
+                ]
+            }
+        ]
+    }
+]

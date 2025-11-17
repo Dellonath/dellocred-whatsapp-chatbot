@@ -10,14 +10,20 @@ class Phone:
     def format_phone_number(phone: str) -> str:
         return phone.replace(' ', '').replace('+', '').replace('-', '').replace('(', '').replace(')', '')
 
+class WAPICredentials:
+    @staticmethod
+    def get_env_variables(key: str) -> str:
+        return os.getenv(key)
 class ZAPIChatbot:
-    def __init__(self):
+    def __init__(self, client_token: str = None, instance_token: str = None, instance_id: str = None):
+
+        self.__client_token = WAPICredentials.get_env_variables(client_token)
+        self.__instance_id = WAPICredentials.get_env_variables(instance_id)
+        self.__instance_token = WAPICredentials.get_env_variables(instance_token)
+
         self.base_url = 'https://api.z-api.io/'
-        self.instance_token = os.getenv('ZAPI_INSTANCE_TOKEN')
-        self.instance_id = os.getenv('ZAPI_INSTANCE_ID')
-        self.client_token = os.getenv('ZAPI_CLIENT_TOKEN')
-        self.headers = {
-            'Client-Token': self.client_token,
+        self.__headers = {
+            'Client-Token': self.__client_token,
             'Content-Type': 'application/json'
         }
 
@@ -30,8 +36,8 @@ class ZAPIChatbot:
 
         response = requests.request(
             'POST',
-            f'{self.base_url}/instances/{self.instance_id}/token/{self.instance_token}/send-text',
-            headers=self.headers,
+            f'{self.base_url}/instances/{self.__instance_id}/token/{self.__instance_token}/send-text',
+            headers=self.__headers,
             data=payload
         )
 
@@ -47,8 +53,8 @@ class ZAPIChatbot:
         
         response = requests.request(
             'POST',
-            f'{self.base_url}/instances/{self.instance_id}/token/{self.instance_token}/send-audio',
-            headers=self.headers,
+            f'{self.base_url}/instances/{self.__instance_id}/token/{self.__instance_token}/send-audio',
+            headers=self.__headers,
             data=payload
         )
 

@@ -1,35 +1,104 @@
-import argparse
+# python3 main.py --datetime 2025-11-17T15:00:00Z --agent 938214 --flow_id 2 --category 'Cliente em potencial' --limit 10 --interval 180
+
 import time
-import datetime
-import logging
-from models import agendor, zapi
+from models.agendor import AgendorAPI
+from models.wapi import WAPI
+from models.agent import Agent
+from models.flow import Flow
+from models.utils import Logs, Args, GetIdByJson
 
-_log = logging.getLogger(__name__)
-logging.basicConfig(filename='logs/main.log',
-                    format='%(asctime)s.%(msecs)03d %(levelname)s %(message)s',
-                    filemode='a',
-                    datefmt='%Y-%m-%d %H:%M:%S',
-                    level=logging.INFO)
+_log = Logs.get_logger()
+args = Args.parse_args()
 
-parser = argparse.ArgumentParser(description='Script to collect people information data from Agendor API and send messages via WhatsApp API')
-parser.add_argument('--datetime', type=str, help="Datetime in ISO 8601 format to filter recently edited people data from Agendor API. Format should be 'YYYY-MM-DDTHH:MM:SSZ'")
-parser.add_argument('--agents', type=str, nargs='+', help='Whitespace-separated Agents IDs responsible for sending messages via WhatsApp API')
-parser.add_argument('--category', type=str, default='Cliente em potencial', help='Category of people to filter from Agendor API')
-args = parser.parse_args()
+agent = Agent(**GetIdByJson.get_by_id('configs/agents.json', args.agent_id))
+flow = Flow(**GetIdByJson.get_by_id('configs/flows.json', args.flow_id))
+agendor_api = AgendorAPI()
+w_api = WAPI(
+    instance_id=agent.instance_id, 
+    instance_token=agent.instance_token
+)
 
-print(args)
+filters={
+    'category': args.category, 
+    'owner_id': args.agent_id
+}
+clients = agendor_api.get_people_stream(
+    since=args.datetime,
+    filters=filters
+)
 
-agendor_api = agendor.AgendorAPI()
-people_data = agendor_api.get_people_stream(since=args.datetime, category=args.category)
+# confirmation section
+print(f'Extract clients updates from: {args.category})')
+print(f'Agent: {agent.id} ({agent.name})')
+print(f'Flow: {flow.id} ({flow.description})')
+print(f'Number of clients extracted: {len(clients)}')
+print(f'Number to be contacted: {args.limit}')
+print(f'interval in secods: {args.interval/60} min ({args.interval} secs)')
+print(f'Filter was applied: {filters}')
+choic = input('Do you confirm starting the WhatsApp campaign with above parameters (Y/N)? ').upper()
+if choic == 'Y':
+    print('Starting campaign!')
+elif choic == 'N':
+    print('Cancelling execution of campaign!')
+    exit()
+else:
+    print('invalid option!')
+    exit()
 
-chatbot = zapi.ZAPIChatbot()
-chatbot_message = 'Hello, this is a test message from the chatbot.'
-audio_url = 'https://audio.jukehost.co.uk/jaILZtwFPSNXUye3W2VNLiczBDr0mIw3'
-for person in people_data:
-    _log.info(f'Starting {person.get("name")} - {person.get("phone")}')
-    _log.info(f'Sending message to {person.get("phone")}')
-    response_message = chatbot.send_message(phone=person.get('phone'), message=chatbot_message)
-    _log.info(f'Sending audio to {person.get("phone")}')
-    response_audio = chatbot.send_audio(phone=person.get('phone'), audio_url=audio_url)
-    _log.info(person, response_message.json(), response_audio.json())
-    time.sleep(180)
+# limit number of clients to be contacted
+clients = clients[:args.limit]
+
+for client in clients:
+    client_id = client.get('id')
+    client_cpf = client.get('cpf')
+    client_name = client.get('name')
+    client_first_name = client.get('first_name')
+    client_phone = client.get('phone')
+    client_owner_id = client.get('owner_id')
+    
+    for action in flow.actions:
+        action_type = action.get('type')
+        
+        _log.info(f"{action_type} to client ID: {client_id}, Name: {client_name}, Phone: {client_phone}, Owner: {agent.first_name}")
+        
+        if action_type == 'send_message':
+            message_template = action.get('message')
+            personalized_message = message_template.replace('{{agent.first_name}}', agent.first_name).replace('{{client.first_name}}', client_first_name)
+            delay=action.get('delay', 1)
+            w_api.send_message(
+                phone=client_phone,
+                message=personalized_message,
+                delay=delay
+            )
+        
+        elif action_type == 'send_audio':
+            audio_url = action.get('audio_url')
+            delay=action.get('delay', 1)
+            w_api.send_audio(
+                phone=client_phone,
+                audio_url=audio_url,
+                delay=delay
+            )
+            
+        elif action_type == 'wait':
+            wait_seconds = action.get('seconds', 0)
+            time.sleep(wait_seconds)
+            
+        elif action_type == 'send_button_actions':
+            personalized_message = message_template.replace('{{agent.first_name}}', agent.first_name).replace('{{client.first_name}}', client_first_name)
+            buttons = action.get('buttons')
+            w_api.send_button_actions(
+                phone=client_phone,
+                message=personalized_message,
+                buttons=buttons
+            )
+            
+        elif action_type == 'webhook':
+            endpoint = action.get('endpoint')
+            personalized_payload = action.get('payload').replace('{{client.cpf}}', client_cpf).replace("'", '"')
+            agendor_api.custom_execution(
+                endpoint=endpoint,
+                payload=personalized_payload
+            )
+        
+    time.sleep(args.interval)
