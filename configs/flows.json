@@ -47,12 +47,13 @@
         "description": "Disparo de oportunidade para portabilidade",
         "actions": [
             {
-                "type": "send_message",
-                "message": "Olá, tudo bem? Sou a {{agent.first_name}}, consultora multibanco especialista em crédito da Dellocred.\n\n*Está sem margem? Tenho uma solução para você!* \n\nA portabilidade para outro banco permite manter as parcelas e receber um troco por isso. Tudo em ambiente seguro. Pra agilizar, me envie um *extrato de consignado* para uma simulação sem compromisso, onde posso te explicar melhor. \n\n*Obs. cuidado com golpes! NENHUM pagamento ou depósito será cobrado para essa atividade.*"
+                "type": "send_audio",
+                "audio_url": "https://audio.jukehost.co.uk/ETld5erfZvh8mQsTtcBszgpU0ZAxlGNF.ogg"
             },
             {
-                "type": "send_audio",
-                "audio_url": "https://audio.jukehost.co.uk/WfDsaBkFCOVJW8ogPb8G9Wh7J2w6TClM.ogg"
+                "type": "webhook",
+                "endpoint": "https://api.agendor.com.br/v3/people/upsert",
+                "payload": "{'cpf': '{{client.cpf}}', 'category': 'Aguardando retorno', 'customFields': {'contato_via': 'Disparo'}}"
             }
         ]
     },

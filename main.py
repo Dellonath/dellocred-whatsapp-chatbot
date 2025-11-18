@@ -1,4 +1,5 @@
 # python3 main.py --datetime 2025-11-17T15:00:00Z --agent 938214 --flow_id 2 --category 'Cliente em potencial' --limit 10 --interval 180
+# python3 main.py --datetime 2025-11-17T18:20:00Z --agent 932790 --flow_id 3 --category 'Cliente em potencial' --limit 22 --interval 180
 
 import time
 from models.agendor import AgendorAPI
@@ -22,6 +23,7 @@ filters={
     'category': args.category, 
     'owner_id': args.agent_id
 }
+
 clients = agendor_api.get_people_stream(
     since=args.datetime,
     filters=filters
