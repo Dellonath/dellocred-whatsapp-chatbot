@@ -7,6 +7,7 @@ load_dotenv()
 class Phone:
     @staticmethod
     def format_phone_number(phone: str) -> str:
+        if not phone: return
         return phone.replace(' ', '').replace('+', '').replace('-', '').replace('(', '').replace(')', '')
 
 class WAPI:

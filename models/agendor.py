@@ -33,7 +33,7 @@ class AgendorAPI:
                 headers=self.__headers,
                 params=params
             ).json()
-            print(len(people))
+
             for person in response['data']:
                 person_data = {
                     'id': person.get('id'),

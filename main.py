@@ -29,40 +29,40 @@ clients = agendor_api.get_people_stream(
     filters=filters
 )
 
+# limit number of clients to be contacted
+clients_filtered = clients[:args.limit]
+
 # confirmation section
 print(f'Extract clients updates from: {args.category})')
 print(f'Agent: {agent.id} ({agent.name})')
 print(f'Flow: {flow.id} ({flow.description})')
 print(f'Number of clients extracted: {len(clients)}')
-print(f'Number to be contacted: {args.limit}')
+print(f'Number to be contacted: {len(clients_filtered)}')
 print(f'interval in secods: {args.interval/60} min ({args.interval} secs)')
 print(f'Filter was applied: {filters}')
-choic = input('Do you confirm starting the WhatsApp campaign with above parameters (Y/N)? ').upper()
-if choic == 'Y':
+choice = input('Do you confirm starting the WhatsApp campaign with above parameters (Y/N)? ').upper()
+if choice == 'Y':
     print('Starting campaign!')
-elif choic == 'N':
+elif choice == 'N':
     print('Cancelling execution of campaign!')
     exit()
 else:
     print('invalid option!')
     exit()
 
-# limit number of clients to be contacted
-clients = clients[:args.limit]
-
-for client in clients:
+for client in clients_filtered:
     client_id = client.get('id')
     client_cpf = client.get('cpf')
     client_name = client.get('name')
     client_first_name = client.get('first_name')
     client_phone = client.get('phone')
     client_owner_id = client.get('owner_id')
-    
+
+    _log.info(f"contacting client: {client_name} ({client_cpf}) | phone: {client_phone} | owner: {agent.first_name}")
     for action in flow.actions:
-        action_type = action.get('type')
-        
-        _log.info(f"{action_type} to client ID: {client_id}, Name: {client_name}, Phone: {client_phone}, Owner: {agent.first_name}")
-        
+        action_type = action.get('type') 
+        _log.info(f"-- triggering type: {action_type}")
+
         if action_type == 'send_message':
             message_template = action.get('message')
             personalized_message = message_template.replace('{{agent.first_name}}', agent.first_name).replace('{{client.first_name}}', client_first_name)
@@ -104,3 +104,5 @@ for client in clients:
             )
         
     time.sleep(args.interval)
+
+_log.info(f"campaign finished!")
