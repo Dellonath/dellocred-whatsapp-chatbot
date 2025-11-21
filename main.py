@@ -36,6 +36,7 @@ clients_filtered = clients[:args.limit]
 print(f'Extract clients updates from: {args.category})')
 print(f'Agent: {agent.id} ({agent.name})')
 print(f'Flow: {flow.id} ({flow.description})')
+print(f'Since: {args.datetime}')
 print(f'Number of clients extracted: {len(clients)}')
 print(f'Number to be contacted: {len(clients_filtered)}')
 print(f'interval in secods: {args.interval/60} min ({args.interval} secs)')
