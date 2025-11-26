@@ -57,14 +57,13 @@ class WAPI:
             json=payload
         )
 
-    
     def send_button_actions(self, phone: str, message: str, buttons: list[dict]) -> dict:
         phone = Phone.format_phone_number(phone)
         payload = {
             'phone': phone,
             'message': message,
         }
-        
+
         buttons = []
         for button in buttons:
             if button.get('type') == 'URL':
@@ -94,8 +93,23 @@ class WAPI:
             json=payload
         )
 
-# chatbot = ZAPIChatbot()
-# chatbot_phone = '5535997275487'
+    def check_number_status(self, phone: str) -> dict:
+        phone = Phone.format_phone_number(phone)
+        response = requests.request(
+            'GET',
+            f'{self.base_url}/contacts/phone-exists',
+            headers=self.__headers,
+            params={
+                'instanceId': self.__instance_id,
+                'phoneNumber': phone
+        }
+        ).json()
+        if response.get('exists'):
+            return True
+        return False
+
+# chatbot = WAPI(instance_id='', instance_token='')
+# chatbot_phone = '35998723079'
 # chatbot_message = 'Hello, this is a test message from the chatbot.'
-# response = chatbot.send_message(chatbot_phone, chatbot_message)
+# response = chatbot.check_number_status(chatbot_phone, chatbot_message)
 # print(response.text)

@@ -1,5 +1,5 @@
-# python3 main.py --datetime 2025-11-17T15:00:00Z --agent 938214 --flow_id 2 --category 'Cliente em potencial' --limit 10 --interval 180
-# python3 main.py --datetime 2025-11-17T18:20:00Z --agent 932790 --flow_id 3 --category 'Cliente em potencial' --limit 22 --interval 180
+# python3 main.py --agent 938214 --flow_id 2 --category 'Cliente em potencial' --limit 40 --interval 180 --datetime 2025-11-23T06:00:00Z
+# python3 main.py --agent 932790 --flow_id 3 --category 'Cliente em potencial' --limit 30 --interval 180 --datetime 2025-11-23T06:00:00Z
 
 import time
 from models.agendor import AgendorAPI
@@ -59,10 +59,20 @@ for client in clients_filtered:
     client_phone = client.get('phone')
     client_owner_id = client.get('owner_id')
 
-    _log.info(f"contacting client: {client_name} ({client_cpf}) | phone: {client_phone} | owner: {agent.first_name}")
+    _log.info(f'contacting client: {client_name} ({client_cpf}) | phone: {client_phone} | owner: {agent.first_name}')
     for action in flow.actions:
         action_type = action.get('type') 
         _log.info(f"-- triggering type: {action_type}")
+
+        if not w_api.check_number_status(phone=client_phone):
+            payload = "{'cpf': '{{client.cpf}}', 'category': 'Telefone incorreto', 'customFields': {'contato_via': 'Disparo'}}"
+            payload = payload.replace('{{client.cpf}}', client_cpf).replace("'", '"')
+            agendor_api.custom_execution(
+                endpoint='https://api.agendor.com.br/v3/people/upsert',
+                payload=payload
+            )
+            _log.info(f"-- triggering type: webhook")
+            continue
 
         if action_type == 'send_message':
             message_template = action.get('message')
