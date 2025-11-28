@@ -23,6 +23,14 @@ class GetIdByJson:
             for obj in data:
                 if obj.get('id') == id: return obj
 
+class ReplaceTextByVariables:
+    @staticmethod
+    def replace(text: str, vars: dict=None) -> list:
+        if not vars: return text
+        for key, value in vars.items():
+            placeholder = '{{' + key + '}}'
+            text = text.replace(placeholder, str(value)).replace("'", '"')
+        return text
 
 class Logs:
     logging.basicConfig(filename='logs/main.log',

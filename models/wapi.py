@@ -104,9 +104,9 @@ class WAPI:
                 'phoneNumber': phone
         }
         ).json()
-        if response.get('exists'):
-            return True
-        return False
+
+        return response.get('exists')
+
 
 # chatbot = WAPI(instance_id='', instance_token='')
 # chatbot_phone = '35998723079'

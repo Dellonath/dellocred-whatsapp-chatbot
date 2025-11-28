@@ -1,7 +1,7 @@
 [
     {
         "id": 1,
-        "description": "Disparo de mensagem de crédito Banco do Brasil",
+        "description": "Exemplo: Disparo de mensagem de crédito Banco do Brasil",
         "actions": [
             {
                 "type": "send_message",
@@ -59,15 +59,28 @@
     },
     {
         "id": 4,
-        "description": "Disparo de botão com ação",
+        "description": "Exemplo: Disparo de botão com ação com probabilidade",
         "actions": [
             {
-                "type": "send_message",
-                "message": "Olá, tudo bem? Sou {{client.first_name}} e estou testando a API."
-            },
-            {
-                "type": "wait",
-                "seconds": 5
+                "type": "random",
+                "choices": [
+                    {
+                        "prob": 0.2,
+                        "action": {
+                            "type": "send_message",
+                            "message": "Olá, tenho prob 0.2",
+                            "delay": 2
+                        }
+                    },
+                    {
+                        "prob": 0.8,
+                        "action": {
+                            "type": "send_message",
+                            "message": "Olá, tenho prob 0.8",
+                            "delay": 2
+                        }
+                    }
+                ]
             },
             {
                 "type": "send_button_actions",
@@ -91,6 +104,96 @@
                     {
                         "type": "REPLAY",
                         "button_text": "Não perturbe"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": 5,
+        "description": "Exemplo: Disparo de probabilidade",
+        "actions": [
+            {
+                "type": "random",
+                "choices": [
+                    {
+                        "prob": 0.2,
+                        "action": {
+                            "type": "send_message",
+                            "message": "Olá, tenho prob 0.2",
+                            "delay": 2
+                        }
+                    },
+                    {
+                        "prob": 0.4,
+                        "action": {
+                            "type": "send_message",
+                            "message": "Olá, tenho prob 0.4",
+                            "delay": 2
+                        }
+                    },
+                    {
+                        "prob": 0.4,
+                        "action": {
+                            "type": "send_audio",
+                            "audio_url": "https://audio.jukehost.co.uk/qCcIBfdY7LKWq9dOdgmA3mFqLzH4qxuC.ogg"
+                        }
+                    }
+                ]
+            },
+            {
+                "type": "random",
+                "choices": [
+                    {
+                        "prob": 0.2,
+                        "action": {
+                            "type": "send_message",
+                            "message": "Olá, tenho prob 0.2",
+                            "delay": 2
+                        }
+                    },
+                    {
+                        "prob": 0.4,
+                        "action": {
+                            "type": "send_message",
+                            "message": "Olá, tenho prob 0.4",
+                            "delay": 2
+                        }
+                    },
+                    {
+                        "prob": 0.4,
+                        "action": {
+                            "type": "send_audio",
+                            "audio_url": "https://audio.jukehost.co.uk/qCcIBfdY7LKWq9dOdgmA3mFqLzH4qxuC.ogg"
+                        }
+                    }
+                ]
+            },
+            {
+                "type": "random",
+                "choices": [
+                    {
+                        "prob": 0.2,
+                        "action": {
+                            "type": "send_message",
+                            "message": "Olá, tenho prob 0.2",
+                            "delay": 2
+                        }
+                    },
+                    {
+                        "prob": 0.4,
+                        "action": {
+                            "type": "send_message",
+                            "message": "Olá, tenho prob 0.4",
+                            "delay": 2
+                        }
+                    },
+                    {
+                        "prob": 0.4,
+                        "action": {
+                            "type": "send_audio",
+                            "audio_url": "https://audio.jukehost.co.uk/qCcIBfdY7LKWq9dOdgmA3mFqLzH4qxuC.ogg"
+                        }
                     }
                 ]
             }
