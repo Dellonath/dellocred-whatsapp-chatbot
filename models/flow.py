@@ -96,7 +96,7 @@ class Flow:
                 ]
             )
         else:
-            raise Exception(f"unknown action type: '{action_type}'")
+            raise Exception(f"Unknown action type: '{action_type}'")
 
     @staticmethod
     def replace_text_by_variables(text: str, vars: dict | None = None) -> list:

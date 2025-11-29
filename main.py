@@ -1,6 +1,6 @@
 # Aldry: python3 main.py --agent 938214 --flow_id 2 --category 'Cliente em potencial' --limit 40 --interval 180 --datetime 2025-11-23T06:00:00Z
 # Rosilene: python3 main.py --agent 932790 --flow_id 3 --category 'Cliente em potencial' --limit 40 --interval 180 --datetime 2025-11-23T06:00:00Z
-# Douglas: python3 main.py --agent 933092 --flow_id 5 --category 'Cliente em potencial' --limit 40 --interval 180 --datetime 2025-11-23T06:00:00Z
+# Douglas: python3 main.py --agent 933092 --flow_id 5 --category 'Cliente em potencial' --limit 40 --interval 2 --datetime 2025-11-23T06:00:00Z
 
 import os
 import time
