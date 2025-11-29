@@ -22,22 +22,3 @@ class GetIdByJson:
             data = json.load(file)
             for obj in data:
                 if obj.get('id') == id: return obj
-
-class ReplaceTextByVariables:
-    @staticmethod
-    def replace(text: str, vars: dict=None) -> list:
-        if not vars: return text
-        for key, value in vars.items():
-            placeholder = '{{' + key + '}}'
-            text = text.replace(placeholder, str(value)).replace("'", '"')
-        return text
-
-class Logs:
-    logging.basicConfig(filename='logs/main.log',
-                        format='%(asctime)s.%(msecs)03d %(levelname)s %(message)s',
-                        filemode='a',
-                        datefmt='%Y-%m-%d %H:%M:%S',
-                        level=logging.INFO)
-    @staticmethod
-    def get_logger():
-        return logging.getLogger(__name__)

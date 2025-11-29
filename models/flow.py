@@ -1,5 +1,106 @@
+from dataclasses import dataclass, field
+from enum import Enum
+
+class FlowActionType(Enum):
+    SEND_MESSAGE = 'send_message'
+    SEND_AUDIO = 'send_audio'
+    SEND_BUTTON_ACTIONS = 'send_button_actions'
+    WEBHOOK = 'webhook'
+    RANDOM = 'random'
+
+@dataclass
+class MessageAction:
+    message: str
+    type: str = field(default=FlowActionType.SEND_MESSAGE.value, init=False)
+    delay: int = field(default=1)
+
+@dataclass
+class AudioAction:
+    audio_url: str
+    type: str = field(default=FlowActionType.SEND_AUDIO.value, init=False)
+    delay: int = field(default=1)
+
+@dataclass
+class WebhookAction:
+    endpoint: str
+    payload: list
+    type: str = field(default=FlowActionType.WEBHOOK.value, init=False)
+
+@dataclass
+class RandomActionOption:
+    prob: float
+    action: MessageAction | AudioAction | WebhookAction
+
+@dataclass
+class RandomAction:
+    choices: list[RandomActionOption]
+    type: str = field(default=FlowActionType.RANDOM.value, init=False)
+
+@dataclass
+class ButtonActionsActionOptions:
+    type: str
+    button_text: str
+    url: str | None
+    phone: str | None
+
+@dataclass
+class ButtonActionsAction:
+    message: str
+    buttons: list[ButtonActionsActionOptions]
+    type: str = field(default=FlowActionType.SEND_BUTTON_ACTIONS.value, init=False)
+
 class Flow:
     def __init__(self, id: int, description: str, actions: dict):
         self.id = id
         self.description = description
-        self.actions = actions
+        self.actions = [self.__create_action(action) for action in actions]
+    
+    def __create_action(self, action: dict):
+        action_type: str = action.get('type')
+
+        if action_type == FlowActionType.SEND_MESSAGE.value:
+            return MessageAction(
+                message=action.get('message')
+            )
+        elif action_type == FlowActionType.SEND_AUDIO.value:
+            return AudioAction(
+                audio_url=action.get('audio_url')
+            )
+        elif action_type == FlowActionType.SEND_BUTTON_ACTIONS.value:
+            return ButtonActionsAction(
+                message=action.get('message'),
+                buttons=[
+                    ButtonActionsActionOptions(
+                        type=button.get('type'),
+                        button_text=button.get('button_text'),
+                        url=button.get('url'),
+                        phone=button.get('phone')
+                    ) for button in action.get('buttons')
+                ]
+            )
+        elif action_type == FlowActionType.WEBHOOK.value:
+            return WebhookAction(
+                endpoint=action.get('endpoint'),
+                payload=action.get('payload')
+            )
+        elif action_type == FlowActionType.RANDOM.value:
+            probs: list[float] = [choice.get('prob') for choice in action.get('choices')]
+            if sum(probs) != 1.0:
+                raise Exception(f'-- invalid sum of probabilities, sum must be 1.0')
+            return RandomAction(
+                choices=[
+                    RandomActionOption(
+                        prob=choice.get('prob'),
+                        action=self.__create_action(choice.get('action'))
+                    ) for choice in action.get('choices')
+                ]
+            )
+        else:
+            raise Exception(f"unknown action type: '{action_type}'")
+
+    @staticmethod
+    def replace_text_by_variables(text: str, vars: dict | None = None) -> list:
+        if not vars: return text
+        for key, value in vars.items():
+            text = text.replace(key, str(value)).replace("'", '"')
+        return text

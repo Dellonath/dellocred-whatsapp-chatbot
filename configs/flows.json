@@ -117,7 +117,7 @@
                 "type": "random",
                 "choices": [
                     {
-                        "prob": 0.2,
+                        "prob": 0.5,
                         "action": {
                             "type": "send_message",
                             "message": "Olá, tenho prob 0.2",
@@ -133,7 +133,7 @@
                         }
                     },
                     {
-                        "prob": 0.4,
+                        "prob": 0.1,
                         "action": {
                             "type": "send_audio",
                             "audio_url": "https://audio.jukehost.co.uk/qCcIBfdY7LKWq9dOdgmA3mFqLzH4qxuC.ogg"
@@ -142,58 +142,27 @@
                 ]
             },
             {
-                "type": "random",
-                "choices": [
+                "type": "send_button_actions",
+                "message": "Texto da mensagem",
+                "buttons": [
                     {
-                        "prob": 0.2,
-                        "action": {
-                            "type": "send_message",
-                            "message": "Olá, tenho prob 0.2",
-                            "delay": 2
-                        }
+                        "type": "CALL",
+                        "button_text": "Entrar em contato",
+                        "phone": "+559992249708"
                     },
                     {
-                        "prob": 0.4,
-                        "action": {
-                            "type": "send_message",
-                            "message": "Olá, tenho prob 0.4",
-                            "delay": 2
-                        }
+                        "type": "URL", 
+                        "button_text": "Visite nosso Site",
+                        "url": "https://w-api.app"
                     },
                     {
-                        "prob": 0.4,
-                        "action": {
-                            "type": "send_audio",
-                            "audio_url": "https://audio.jukehost.co.uk/qCcIBfdY7LKWq9dOdgmA3mFqLzH4qxuC.ogg"
-                        }
-                    }
-                ]
-            },
-            {
-                "type": "random",
-                "choices": [
-                    {
-                        "prob": 0.2,
-                        "action": {
-                            "type": "send_message",
-                            "message": "Olá, tenho prob 0.2",
-                            "delay": 2
-                        }
+                        "type": "URL", 
+                        "button_text": "Simule agora mesmo!",
+                        "url": "https://wa.me/5535998723079?text=Ol%C3%A1%2C%20quero%20simular!"
                     },
                     {
-                        "prob": 0.4,
-                        "action": {
-                            "type": "send_message",
-                            "message": "Olá, tenho prob 0.4",
-                            "delay": 2
-                        }
-                    },
-                    {
-                        "prob": 0.4,
-                        "action": {
-                            "type": "send_audio",
-                            "audio_url": "https://audio.jukehost.co.uk/qCcIBfdY7LKWq9dOdgmA3mFqLzH4qxuC.ogg"
-                        }
+                        "type": "REPLAY",
+                        "button_text": "Não perturbe"
                     }
                 ]
             }

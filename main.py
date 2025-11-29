@@ -1,24 +1,72 @@
 # Aldry: python3 main.py --agent 938214 --flow_id 2 --category 'Cliente em potencial' --limit 40 --interval 180 --datetime 2025-11-23T06:00:00Z
 # Rosilene: python3 main.py --agent 932790 --flow_id 3 --category 'Cliente em potencial' --limit 40 --interval 180 --datetime 2025-11-23T06:00:00Z
-# Douglas: python3 main.py --agent 933092 --flow_id 4 --category 'Cliente em potencial' --limit 40 --interval 180
+# Douglas: python3 main.py --agent 933092 --flow_id 5 --category 'Cliente em potencial' --limit 40 --interval 180 --datetime 2025-11-23T06:00:00Z
 
+import os
 import time
+import logging
 import random
+from dotenv import load_dotenv
+from dataclasses import dataclass
 from models.agendor import AgendorAPI
 from models.wapi import WAPI
-from models.agent import Agent
-from models.flow import Flow
-from models.utils import Logs, Args, GetIdByJson, ReplaceTextByVariables
+from models.flow import Flow, FlowActionType
+from models.utils import Args, GetIdByJson
 
-_log = Logs.get_logger()
+load_dotenv()
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s.%(msecs)03d %(levelname)s %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S',
+    handlers=[
+        logging.FileHandler('logs/main.log'), # log to file
+        logging.StreamHandler() # stream to console
+    ]
+)
+
 args = Args.parse_args()
 
-agent = Agent(**GetIdByJson.get_by_id('configs/agents.json', args.agent_id))
-flow = Flow(**GetIdByJson.get_by_id('configs/flows.json', args.flow_id))
+@dataclass
+class AgentCredentials:
+    instance_id: int
+    instance_token: int
+
+@dataclass
+class Agent:
+    id: int
+    name: str
+    first_name: str
+    creds: AgentCredentials
+    
+@dataclass
+class Client:
+    id: int
+    cpf: str
+    category: str
+    name: str
+    first_name: str
+    phone: str
+    owner_id: int
+
+agent_data = GetIdByJson.get_by_id('configs/agents.json', args.agent_id)
+flow_data = GetIdByJson.get_by_id('configs/flows.json', args.flow_id)
+
+flow = Flow(**flow_data)
+agent = Agent(
+    id=agent_data.get('id'),
+    name=agent_data.get('name'),
+    first_name=agent_data.get('name').split()[0],
+    creds=AgentCredentials(
+        instance_id=os.getenv(agent_data.get('creds').get('instance_id')),
+        instance_token=os.getenv(agent_data.get('creds').get('instance_token'))
+    )
+)
+
 agendor_api = AgendorAPI()
 w_api = WAPI(
-    instance_id=agent.instance_id,
-    instance_token=agent.instance_token
+    instance_id=agent.creds.instance_id,
+    instance_token=agent.creds.instance_token
 )
 
 filters={
@@ -41,11 +89,11 @@ print(f'Flow: {flow.id} ({flow.description})')
 print(f'Since: {args.datetime}')
 print(f'Number of clients extracted: {len(clients)}')
 print(f'Number to be contacted: {len(clients_filtered)}')
-print(f'interval in secods: {args.interval/60} min ({args.interval} secs)')
+print(f'interval in secods: {round(args.interval/60, 2)} min ({args.interval} secs)')
 print(f'Filter was applied: {filters}')
 choice = input('Do you confirm starting the WhatsApp campaign with above parameters (Y/N)? ').upper()
 if choice == 'Y':
-    print('Starting campaign!')
+    logging.info('Campaign started successfully!')
 elif choice == 'N':
     print('Cancelling execution of campaign!')
     exit()
@@ -54,102 +102,83 @@ else:
     exit()
 
 for client in clients_filtered:
-    client_id = client.get('id')
-    client_cpf = client.get('cpf')
-    client_name = client.get('name')
-    client_first_name = client.get('first_name')
-    client_phone = client.get('phone')
-    client_owner_id = client.get('owner_id')
+    client = Client(**client)
 
-    _log.info(f'contacting client: {client_name} ({client_cpf}) | phone: {client_phone} | owner: {agent.first_name}')
-    for action in flow.actions:
-        loop_action = action
-        loop_action_type = action.get('type')
+    logging.info(f'contacting client: {client.name} ({client.cpf}) | phone: {client.phone} | owner: {agent.name}')
+    for action_loop in flow.actions:
 
-        _log.info(f"-- triggering type: {loop_action_type}")
+        action = action_loop
+        logging.info(f"-- triggering type: {action.type}")
 
-        if not w_api.check_number_status(phone=client_phone):
-            payload = ReplaceTextByVariables.replace(
+        if not w_api.check_number_status(phone=client.phone):
+            logging.warning(f"-- client {client.first_name} ({client.cpf}): phone incorrect, skipping to next client")
+            payload = Flow.replace_text_by_variables(
                 text="{'cpf': '{{client.cpf}}', 'category': 'Telefone incorreto', 'customFields': {'contato_via': 'Disparo'}}",
-                vars={
-                    'client.cpf': client_cpf
-                }
+                vars={'{{client.cpf}}': client.cpf}
             )
-
             agendor_api.custom_execution(
-                endpoint='https://api.agendor.com.br/v3/people/upsert',
+                url='https://api.agendor.com.br/v3/people/upsert',
                 payload=payload
             )
-            _log.warning(f"-- client {client_first_name} ({client_cpf}): phone incorrect, skipping to next client")
             continue
 
-        if loop_action_type == 'random':
-            choices = loop_action.get('choices')
-            weights = [choice.get('prob') for choice in choices]
-            if sum(weights) != 1.0: 
-                raise Exception(f'-- invalid sum of probabilities, sum must be 1.0')
-            loop_action = random.choices(choices, weights, k=1)[0].get('action')
-            loop_action_type = loop_action.get('type')
-            _log.info(f"-- choice selected: {loop_action}")
+        if action.type == FlowActionType.RANDOM.value:
+            population, weights = [], []
+            for choice in action.choices:
+                population.append(choice.action)
+                weights.append(choice.prob)
+            action = random.choices(
+                population=population,
+                weights=weights,
+                k=1
+            )[0]
+            logging.info(f"-- choice selected: {action.type}")
             
-        if loop_action_type == 'send_message':
-            message_template = loop_action.get('message')
-            personalized_message = ReplaceTextByVariables.replace(
-                text=message_template,
+        if action.type == FlowActionType.SEND_MESSAGE.value:
+            message = Flow.replace_text_by_variables(
+                text=action.message,
                 vars={
-                    'agent.first_name': agent.first_name,
-                    'client.first_name': client_first_name
+                    '{{agent.first_name}}': agent.first_name,
+                    '{{client.first_name}}': client.first_name
                 }
             )
-            delay=loop_action.get('delay', 1)
             w_api.send_message(
-                phone=client_phone,
-                message=personalized_message,
-                delay=delay
+                phone=client.phone,
+                message=message,
+                delay=action.delay
             )
 
-        elif loop_action_type == 'send_audio':
-            audio_url = loop_action.get('audio_url')
-            delay=loop_action.get('delay', 1)
+        elif action.type == FlowActionType.SEND_AUDIO.value:
             w_api.send_audio(
-                phone=client_phone,
-                audio_url=audio_url,
-                delay=delay
+                phone=client.phone,
+                audio_url=action.audio_url,
+                delay=action.delay
             )
 
-        elif loop_action_type == 'wait':
-            wait_seconds = loop_action.get('seconds', 0)
-            time.sleep(wait_seconds)
-
-        elif loop_action_type == 'send_button_actions':
-            personalized_message = ReplaceTextByVariables.replace(
-                text=message_template,
+        elif action.type == FlowActionType.SEND_BUTTON_ACTIONS.value:
+            message = Flow.replace_text_by_variables(
+                text=action.message,
                 vars={
-                    'agent.first_name': agent.first_name,
-                    'client.first_name': client_first_name
+                    '{{agent.first_name}}': agent.first_name,
+                    '{{client.first_name}}': client.first_name
                 }
             )
-            buttons = loop_action.get('buttons')
             w_api.send_button_actions(
-                phone=client_phone,
-                message=personalized_message,
-                buttons=buttons
+                phone=client.phone,
+                message=message,
+                buttons=action.buttons
             )
 
-        elif loop_action_type == 'webhook':
-            endpoint = loop_action.get('endpoint')
-            payload = loop_action.get('payload')
-            personalized_payload = ReplaceTextByVariables.replace(
-                text=payload,
-                vars={
-                    'client.cpf': client_cpf
-                }
+        elif action.type == FlowActionType.WEBHOOK.value:
+            payload = Flow.replace_text_by_variables(
+                text=action.payload,
+                vars={'{{client.cpf}}': client.cpf}
             )
             agendor_api.custom_execution(
-                endpoint=endpoint,
-                payload=personalized_payload
+                url=action.endpoint,
+                payload=payload
             )
 
     time.sleep(args.interval)
 
-_log.info(f"campaign finished!")
+logging.info('Campaign finished successfully!')

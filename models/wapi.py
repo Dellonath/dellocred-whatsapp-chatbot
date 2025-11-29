@@ -1,8 +1,10 @@
-import json
 import requests
-from dotenv import load_dotenv
-
-load_dotenv()
+from enum import Enum
+from models.flow import ButtonActionsActionOptions
+class ButtonActionType(Enum):
+    CALL = 'CALL'
+    URL = 'URL'
+    REPLAY = 'REPLAY'
 
 class Phone:
     @staticmethod
@@ -33,13 +35,16 @@ class WAPI:
             'delayMessage': delay
         }
 
-        requests.request(
+        response = requests.request(
             'POST',
             f'{self.base_url}/message/send-text',
             headers=self.__headers,
             params=self.__params,
             json=payload
         )
+        
+        if response.status_code != 200:
+            raise Exception('Error sending audio actions:', response.text)
 
     def send_audio(self, phone: str, audio_url: str, delay: int) -> dict:
         phone = Phone.format_phone_number(phone)
@@ -49,49 +54,57 @@ class WAPI:
             'delayMessage': delay
         }
 
-        requests.request(
+        response = requests.request(
             'POST',
             f'{self.base_url}/message/send-audio',
             headers=self.__headers,
             params=self.__params,
             json=payload
         )
+        
+        if response.status_code != 200:
+            raise Exception('Error sending audio actions:', response.text)
 
-    def send_button_actions(self, phone: str, message: str, buttons: list[dict]) -> dict:
+    def send_button_actions(self, phone: str, message: str, buttons: list[ButtonActionsActionOptions]) -> dict:
         phone = Phone.format_phone_number(phone)
         payload = {
             'phone': phone,
             'message': message,
         }
 
-        buttons = []
+        buttons_actions = []
         for button in buttons:
-            if button.get('type') == 'URL':
-                buttons.append({
-                    'type': "URL",
-                    'buttonText': button.get('button_text'),
-                    'url': button.get('url')
+            if button.type == ButtonActionType.URL.value:
+                buttons_actions.append({
+                    'type': 'URL',
+                    'buttonText': button.button_text,
+                    'url': button.url
                 })
-            elif button.get('type') == 'CALL':
-                buttons.append({
+            elif button.type == ButtonActionType.CALL.value:
+                buttons_actions.append({
                     'type': 'CALL',
-                    'buttonText': button.get('button_text'),
-                    'phone': button.get('phone')
+                    'buttonText': button.button_text,
+                    'phone': button.phone
                 })
-            elif button.get('type') == 'REPLAY':
-                buttons.append({
+            elif button.type == ButtonActionType.REPLAY.value:
+                buttons_actions.append({
                     'type': 'REPLAY',
-                    'buttonText': button.get('button_text'),
+                    'buttonText': button.button_text,
                 })
-        payload['buttonActions'] = buttons
+            else:
+                raise Exception('Invalid button action type:', button.type)
+        payload['buttonActions'] = buttons_actions
 
-        requests.request(
+        response = requests.request(
             'POST',
             f'{self.base_url}/message/send-button-actions',
             headers=self.__headers,
             params=self.__params,
             json=payload
         )
+        if response.status_code != 200:
+            raise Exception('Error sending button actions:', response.text)
+        return response
 
     def check_number_status(self, phone: str) -> dict:
         phone = Phone.format_phone_number(phone)
@@ -102,10 +115,13 @@ class WAPI:
             params={
                 'instanceId': self.__instance_id,
                 'phoneNumber': phone
-        }
-        ).json()
+            }
+        )
+        
+        if response.status_code != 200:
+            raise Exception('Error checking number:', response.text)
 
-        return response.get('exists')
+        return response.json().get('exists')
 
 
 # chatbot = WAPI(instance_id='', instance_token='')

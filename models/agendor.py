@@ -52,14 +52,12 @@ class AgendorAPI:
 
         return people
 
-    def custom_execution(self, endpoint: str, payload: dict) -> dict:
-
+    def custom_execution(self, url: str, payload: dict | None = None) -> dict:
         response = requests.post(
-            endpoint,
+            url=url,
             headers=self.__headers,
             json=json.loads(payload)
         )
-
         return response
 
 
