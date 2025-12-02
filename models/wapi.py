@@ -1,6 +1,6 @@
 import requests
 from enum import Enum
-from models.flow import ButtonActionsActionOptions
+from models.flow import ButtonActionsActionOptions, CarouselCard
 class ButtonActionType(Enum):
     CALL = 'CALL'
     URL = 'URL'
@@ -10,7 +10,14 @@ class Phone:
     @staticmethod
     def format_phone_number(phone: str) -> str:
         if not phone: return
-        return phone.replace(' ', '').replace('+', '').replace('-', '').replace('(', '').replace(')', '')
+        return (
+            phone
+            .replace(' ', '')
+            .replace('+', '')
+            .replace('-', '')
+            .replace('(', '')
+            .replace(')', '')
+        )
 
 class WAPI:
     def __init__(self, instance_id: str, instance_token: str):
@@ -42,7 +49,7 @@ class WAPI:
             params=self.__params,
             json=payload
         )
-        
+
         if response.status_code != 200:
             raise Exception('Error sending audio actions:', response.text)
 
@@ -61,7 +68,7 @@ class WAPI:
             params=self.__params,
             json=payload
         )
-        
+
         if response.status_code != 200:
             raise Exception('Error sending audio actions:', response.text)
 
@@ -74,30 +81,43 @@ class WAPI:
 
         buttons_actions = []
         for button in buttons:
-            if button.type == ButtonActionType.URL.value:
-                buttons_actions.append({
-                    'type': 'URL',
-                    'buttonText': button.button_text,
-                    'url': button.url
-                })
-            elif button.type == ButtonActionType.CALL.value:
-                buttons_actions.append({
-                    'type': 'CALL',
-                    'buttonText': button.button_text,
-                    'phone': button.phone
-                })
-            elif button.type == ButtonActionType.REPLAY.value:
-                buttons_actions.append({
-                    'type': 'REPLAY',
-                    'buttonText': button.button_text,
-                })
-            else:
-                raise Exception('Invalid button action type:', button.type)
+            buttons_actions.append(self.__create_button_action(button))
         payload['buttonActions'] = buttons_actions
 
         response = requests.request(
             'POST',
             f'{self.base_url}/message/send-button-actions',
+            headers=self.__headers,
+            params=self.__params,
+            json=payload
+        )
+        if response.status_code != 200:
+            raise Exception('Error sending button actions:', response.text)
+        return response
+
+    def send_carousel(self, phone: str, message: str, cards: list[CarouselCard]) -> dict:
+        phone = Phone.format_phone_number(phone)
+        payload = {
+            'phone': phone,
+            'message': message,
+        }
+
+        cards_actions = []
+        buttons_actions = []
+        for card in cards:
+            for button in card.buttons:
+                buttons_actions.append(self.__create_button_action(button))
+            cards_actions.append({
+                'text': card.text,
+                'image': card.image,
+                'buttonActions': buttons_actions
+            })
+        payload['message'] = message
+        payload['cards'] = cards_actions
+
+        response = requests.request(
+            'POST',
+            f'{self.base_url}/message/send-carousel',
             headers=self.__headers,
             params=self.__params,
             json=payload
@@ -117,11 +137,31 @@ class WAPI:
                 'phoneNumber': phone
             }
         )
-        
         if response.status_code != 200:
             raise Exception('Error checking number:', response.text)
 
         return response.json().get('exists')
+
+    def __create_button_action(self, button: ButtonActionsActionOptions) -> dict:
+        if button.type == ButtonActionType.URL.value:
+            return {
+                'type': 'URL',
+                'buttonText': button.button_text,
+                'url': button.url
+            }
+        elif button.type == ButtonActionType.CALL.value:
+            return {
+                'type': 'CALL',
+                'buttonText': button.button_text,
+                'phone': button.phone
+            }
+        elif button.type == ButtonActionType.REPLAY.value:
+            return {
+                'type': 'REPLAY',
+                'buttonText': button.button_text,
+            }
+        else:
+            raise Exception('Invalid button action type:', button.type)
 
 
 # chatbot = WAPI(instance_id='', instance_token='')

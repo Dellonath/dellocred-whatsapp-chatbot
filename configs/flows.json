@@ -1,7 +1,8 @@
 [
     {
         "id": 1,
-        "description": "Exemplo: Disparo de mensagem de crédito Banco do Brasil",
+        "active": false,
+        "description": "Disparo de mensagem de crédito Banco do Brasil",
         "actions": [
             {
                 "type": "send_message",
@@ -21,6 +22,7 @@
     },
     {
         "id": 2,
+        "active": true,
         "description": "Disparo de áudio de crédito Banco do Brasil",
         "actions": [
             {
@@ -44,11 +46,28 @@
     },
     {
         "id": 3,
+        "active": true,
         "description": "Disparo de oportunidade para portabilidade",
         "actions": [
             {
-                "type": "send_audio",
-                "audio_url": "https://audio.jukehost.co.uk/aRj1U3HeGBeef0piiizzvtMuQVgXZxTs.ogg"
+                "type": "random",
+                "choices": [
+                    {
+                        "prob": 0.5,
+                        "action": {
+                            "type": "send_audio",
+                            "audio_url": "https://audio.jukehost.co.uk/aRj1U3HeGBeef0piiizzvtMuQVgXZxTs.ogg"
+                        }
+                    },
+                    {
+                        "prob": 0.5,
+                        "action": {
+                            "type": "send_message",
+                            "message": "Olá! {{client.first_name}}, tudo bem? Sou {{agent.first_name}}, consultora especialista em crédito da Dellocred.\nNotei pelo seu cadastro uma possível linha de portabilidade com troco, sem precisar de margem.\nMe envie o extrato de consignado para uma simulação sem compromisso. Aguardo!",
+                            "delay": 2
+                        }
+                    }
+                ]
             },
             {
                 "type": "webhook",
@@ -59,7 +78,8 @@
     },
     {
         "id": 4,
-        "description": "Exemplo: Disparo de botão com ação com probabilidade",
+        "active": false,
+        "description": "Disparo de botão com ação com probabilidade",
         "actions": [
             {
                 "type": "random",
@@ -111,7 +131,8 @@
     },
     {
         "id": 5,
-        "description": "Exemplo: Disparo de probabilidade",
+        "active": false,
+        "description": "Disparo de probabilidade",
         "actions": [
             {
                 "type": "random",
@@ -140,29 +161,88 @@
                         }
                     }
                 ]
+            }
+        ]
+    },
+    {
+        "id": 6,
+        "active": true,
+        "description": "Disparo de probabilidade",
+        "actions": [
+            {
+                "type": "random",
+                "choices": [
+                    {
+                        "prob": 0.34,
+                        "action": {
+                            "type": "send_button_actions",
+                            "message": "Olá {{client.first_name}}, tudo bem?\n\nMe chamo {{agent.first_name}}, sou consultora da Dellocred, empresa parceira Mais BB autorizada do *Banco do Brasil*. \n\nVocê pode realizar uma simulação *gratuita*, *segura* e *sem compromisso* para verificar as condições de crédito disponíveis no seu perfil.",
+                            "buttons": [
+                                {
+                                    "type": "REPLAY",
+                                    "button_text": "Sim, quero uma simular!"
+                                },
+                                {
+                                    "type": "REPLAY",
+                                    "button_text": "Não no momento, obrigado."
+                                },
+                                {
+                                    "type": "REPLAY",
+                                    "button_text": "Não me perturbe."
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "prob": 0.33,
+                        "action": {
+                            "type": "send_message",
+                            "message": "Olá {{client.first_name}}, tudo bem?\n\nMe chamo {{agent.first_name}}, sou consultora da Dellocred, empresa parceira Mais BB autorizada do *Banco do Brasil*. \n\nVocê pode realizar uma simulação *gratuita*, *segura* e *sem compromisso* para verificar as condições de crédito disponíveis no seu perfil. Teria interesse?",
+                            "delay": 2
+                        }
+                    },
+                    {
+                        "prob": 0.33,
+                        "action": {
+                            "type": "send_audio",
+                            "audio_url": "https://audio.jukehost.co.uk/qCcIBfdY7LKWq9dOdgmA3mFqLzH4qxuC.ogg"
+                        }
+                    }
+                ]
             },
             {
-                "type": "send_button_actions",
-                "message": "Texto da mensagem",
-                "buttons": [
+                "type": "webhook",
+                "endpoint": "https://api.agendor.com.br/v3/people/upsert",
+                "payload": "{'cpf': '{{client.cpf}}', 'category': 'Aguardando retorno', 'customFields': {'contato_via': 'Disparo'}}"
+            }
+        ]
+    },
+    {
+        "id": 7,
+        "active": true,
+        "description": "Disparo de carrossel",
+        "actions": [
+            {
+                "type": "send_carousel",
+                "message": "Olá, {{client.first_name}}, tudo bem? Sou {{agent.first_name}}, consultora especialista de crédito da Dellocred, autorizada do Banco do Brasil.",
+                "cards": [
                     {
-                        "type": "CALL",
-                        "button_text": "Entrar em contato",
-                        "phone": "+559992249708"
-                    },
-                    {
-                        "type": "URL", 
-                        "button_text": "Visite nosso Site",
-                        "url": "https://w-api.app"
-                    },
-                    {
-                        "type": "URL", 
-                        "button_text": "Simule agora mesmo!",
-                        "url": "https://wa.me/5535998723079?text=Ol%C3%A1%2C%20quero%20simular!"
-                    },
-                    {
-                        "type": "REPLAY",
-                        "button_text": "Não perturbe"
+                        "text": "Gostaria de receber uma simulação sem compromisso?",
+                        "image": "https://res.cloudinary.com/dg0nvnjqw/image/upload/v1764680959/bb-whatsapp-carrocel-1_sp7pfd.png",
+                        "buttons": [
+                            {
+                                "type": "REPLAY",
+                                "button_text": "Sim, quero simular!"
+                            },
+                            {
+                                "type": "REPLAY",
+                                "button_text": "Não no momento, obrigado!"
+                            },
+                            {
+                                "type": "REPLAY",
+                                "button_text": "Não me pertube."
+                            }
+                        ]
                     }
                 ]
             }

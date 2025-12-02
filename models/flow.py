@@ -5,6 +5,7 @@ class FlowActionType(Enum):
     SEND_MESSAGE = 'send_message'
     SEND_AUDIO = 'send_audio'
     SEND_BUTTON_ACTIONS = 'send_button_actions'
+    SEND_CAROUSEL = 'send_carousel'
     WEBHOOK = 'webhook'
     RANDOM = 'random'
 
@@ -49,12 +50,27 @@ class ButtonActionsAction:
     buttons: list[ButtonActionsActionOptions]
     type: str = field(default=FlowActionType.SEND_BUTTON_ACTIONS.value, init=False)
 
+@dataclass
+class CarouselCard:
+    text: str
+    image: str
+    buttons: list[ButtonActionsActionOptions]
+
+@dataclass
+class CarouselAction:
+    message: str
+    cards: list[CarouselCard]
+    type: str = field(default=FlowActionType.SEND_CAROUSEL.value, init=False)
+
 class Flow:
-    def __init__(self, id: int, description: str, actions: dict):
+    def __init__(self, id: int, active: bool, description: str, actions: dict):
         self.id = id
+        self.active = active
         self.description = description
         self.actions = [self.__create_action(action) for action in actions]
-    
+        if not self.active:
+            raise Exception(f'-- flow id {self.id} is inactive')
+
     def __create_action(self, action: dict):
         action_type: str = action.get('type')
 
@@ -76,6 +92,24 @@ class Flow:
                         url=button.get('url'),
                         phone=button.get('phone')
                     ) for button in action.get('buttons')
+                ]
+            )
+        elif action_type == FlowActionType.SEND_CAROUSEL.value:
+            return CarouselAction(
+                message=action.get('message'),
+                cards=[
+                    CarouselCard(
+                        text=card.get('text'),
+                        image=card.get('image'),
+                        buttons=[
+                            ButtonActionsActionOptions(
+                                type=button.get('type'),
+                                button_text=button.get('button_text'),
+                                url=button.get('url', None),
+                                phone=button.get('phone', None)
+                            ) for button in card.get('buttons')
+                        ]
+                    ) for card in action.get('cards')
                 ]
             )
         elif action_type == FlowActionType.WEBHOOK.value:
