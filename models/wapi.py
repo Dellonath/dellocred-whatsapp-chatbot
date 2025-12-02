@@ -1,6 +1,7 @@
 import requests
 from enum import Enum
 from models.flow import ButtonActionsActionOptions, CarouselCard
+
 class ButtonActionType(Enum):
     CALL = 'CALL'
     URL = 'URL'
@@ -162,7 +163,6 @@ class WAPI:
             }
         else:
             raise Exception('Invalid button action type:', button.type)
-
 
 # chatbot = WAPI(instance_id='', instance_token='')
 # chatbot_phone = '35998723079'
