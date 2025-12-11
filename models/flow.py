@@ -120,7 +120,7 @@ class Flow:
         elif action_type == FlowActionType.RANDOM.value:
             probs: list[float] = [choice.get('prob') for choice in action.get('choices')]
             if sum(probs) != 1.0:
-                raise Exception(f'-- invalid sum of probabilities, sum must be 1.0')
+                raise Exception(f'-- invalid sum of probabilities {round(sum(probs), 2)}, sum must be 1.0')
             return RandomAction(
                 choices=[
                     RandomActionOption(

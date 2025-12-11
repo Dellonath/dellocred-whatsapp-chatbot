@@ -53,18 +53,45 @@
                 "type": "random",
                 "choices": [
                     {
-                        "prob": 0.5,
+                        "prob": 0.4,
                         "action": {
                             "type": "send_audio",
                             "audio_url": "https://audio.jukehost.co.uk/aRj1U3HeGBeef0piiizzvtMuQVgXZxTs.ogg"
                         }
                     },
                     {
-                        "prob": 0.5,
+                        "prob": 0.1,
                         "action": {
                             "type": "send_message",
                             "message": "Olá! {{client.first_name}}, tudo bem? Sou {{agent.first_name}}, consultora especialista em crédito da Dellocred.\nNotei pelo seu cadastro uma possível linha de portabilidade com troco, sem precisar de margem.\nMe envie o extrato de consignado para uma simulação sem compromisso. Aguardo!",
                             "delay": 2
+                        }
+                    },
+                    {
+                        "prob": 0.5,
+                        "action": {
+                            "type": "send_carousel",
+                            "message": "Olá, {{client.first_name}}, tudo bem? Sou {{agent.first_name}}, consultora especialista de crédito da Dellocred.",
+                            "cards": [
+                                {
+                                    "text": "Gostaria de receber uma simulação de portabilidade com troco, sem precisar de margem? Me envie o extrato de consignado para uma simulação sem compromisso.",
+                                    "image": "https://res.cloudinary.com/dg0nvnjqw/image/upload/v1764937784/portabilidade-whatsapp-carrocel-1_m4nbwa.jpg",
+                                    "buttons": [
+                                        {
+                                            "type": "REPLAY",
+                                            "button_text": "Sim, quero simular!"
+                                        },
+                                        {
+                                            "type": "REPLAY",
+                                            "button_text": "Não no momento, obrigado!"
+                                        },
+                                        {
+                                            "type": "REPLAY",
+                                            "button_text": "Não me pertube."
+                                        }
+                                    ]
+                                }
+                            ]
                         }
                     }
                 ]
@@ -173,7 +200,7 @@
                 "type": "random",
                 "choices": [
                     {
-                        "prob": 0.34,
+                        "prob": 0.25,
                         "action": {
                             "type": "send_button_actions",
                             "message": "Olá {{client.first_name}}, tudo bem?\n\nMe chamo {{agent.first_name}}, sou consultora da Dellocred, empresa parceira Mais BB autorizada do *Banco do Brasil*. \n\nVocê pode realizar uma simulação *gratuita*, *segura* e *sem compromisso* para verificar as condições de crédito disponíveis no seu perfil.",
@@ -194,7 +221,7 @@
                         }
                     },
                     {
-                        "prob": 0.33,
+                        "prob": 0.25,
                         "action": {
                             "type": "send_message",
                             "message": "Olá {{client.first_name}}, tudo bem?\n\nMe chamo {{agent.first_name}}, sou consultora da Dellocred, empresa parceira Mais BB autorizada do *Banco do Brasil*. \n\nVocê pode realizar uma simulação *gratuita*, *segura* e *sem compromisso* para verificar as condições de crédito disponíveis no seu perfil. Teria interesse?",
@@ -202,10 +229,37 @@
                         }
                     },
                     {
-                        "prob": 0.33,
+                        "prob": 0.25,
                         "action": {
                             "type": "send_audio",
                             "audio_url": "https://audio.jukehost.co.uk/qCcIBfdY7LKWq9dOdgmA3mFqLzH4qxuC.ogg"
+                        }
+                    },
+                    {
+                        "prob": 0.25,
+                        "action": {
+                            "type": "send_carousel",
+                            "message": "Olá, {{client.first_name}}, tudo bem? Sou {{agent.first_name}}, consultora especialista de crédito da Dellocred, autorizada do Banco do Brasil.",
+                            "cards": [
+                                {
+                                    "text": "Gostaria de receber uma simulação sem compromisso?",
+                                    "image": "https://res.cloudinary.com/dg0nvnjqw/image/upload/v1764680959/bb-whatsapp-carrocel-1_sp7pfd.png",
+                                    "buttons": [
+                                        {
+                                            "type": "REPLAY",
+                                            "button_text": "Sim, quero simular!"
+                                        },
+                                        {
+                                            "type": "REPLAY",
+                                            "button_text": "Não no momento, obrigado!"
+                                        },
+                                        {
+                                            "type": "REPLAY",
+                                            "button_text": "Não me pertube."
+                                        }
+                                    ]
+                                }
+                            ]
                         }
                     }
                 ]
@@ -219,7 +273,7 @@
     },
     {
         "id": 7,
-        "active": true,
+        "active": false,
         "description": "Disparo de carrossel",
         "actions": [
             {
