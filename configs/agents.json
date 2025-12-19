@@ -1,35 +1,39 @@
 [
     {
-        "id": 933092,
         "name": "Douglas Oliveira",
-        "creds": {
-            "instance_id": "WAPI_INSTANCE_ID_ALIMA",
-            "instance_token": "WAPI_INSTANCE_TOKEN_ALIMA"
-        }
+        "creds": [
+            {
+                "instance_id": "WAPI_INSTANCE_ID_ALIMA",
+                "instance_token": "WAPI_INSTANCE_TOKEN_ALIMA"
+            }
+        ]
     },
     {
-        "id": 938214,
         "name": "Aldriely Lima",
-        "creds": {
-            "instance_id": "WAPI_INSTANCE_ID_ALIMA",
-            "instance_token": "WAPI_INSTANCE_TOKEN_ALIMA"
-        }
+        "creds": [
+            {
+                "instance_id": "WAPI_INSTANCE_ID_ALIMA",
+                "instance_token": "WAPI_INSTANCE_TOKEN_ALIMA"
+            }
+        ]
     },
     {
-        "id": 932790,
         "name": "Rosilene Mendes",
-        "creds": {
-            "instance_id": "WAPI_INSTANCE_ID_RMENDES",
-            "instance_token": "WAPI_INSTANCE_TOKEN_RMENDES"
-            
-        }
+        "creds": [
+            {
+                "instance_id": "WAPI_INSTANCE_ID_RMENDES",
+                "instance_token": "WAPI_INSTANCE_TOKEN_RMENDES"
+                
+            }
+        ]
     },
     {
-        "id": 942496,
         "name": "Danielle Oliveira",
-        "creds": {
-            "instance_id": "WAPI_INSTANCE_ID_DOLIV",
-            "instance_token": "WAPI_INSTANCE_TOKEN_DOLIV"
-        }
+        "creds": [
+            {
+                "instance_id": "WAPI_INSTANCE_ID_DOLIV",
+                "instance_token": "WAPI_INSTANCE_TOKEN_DOLIV"
+            }
+        ]
     }
 ]

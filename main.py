@@ -1,6 +1,10 @@
-# Aldry: python3 main.py --agent 938214 --flow_id 6 --category 'Cliente em potencial' --limit 20 --interval 300 --datetime 2025-11-23T06:00:00Z
-# Rosilene: python3 main.py --agent 932790 --flow_id 3 --category 'Cliente em potencial' --limit 40 --interval 300 --datetime 2025-11-23T06:00:00Z
-# Douglas: python3 main.py --agent 933092 --flow_id 7 --category 'Cliente em potencial' --limit 40 --interval 2 --datetime 2025-12-01T06:00:00Z
+# python3 main.py --agent 'Aldriely Lima' --flow_id 6 --category 'Cliente em potencial' --limit 20 --datetime 2025-11-23T06:00:00Z
+# python3 main.py --agent 'Rosilene Mendes' --flow_id 3 --category 'Cliente em potencial' --limit 40 --datetime 2025-11-23T06:00:00Z
+# python3 main.py --agent 'Douglas Oliveira' --flow_id 7 --category 'Cliente em potencial' --limit 40 --datetime 2025-12-01T06:00:00Z
+
+# python3 main.py --agent 'Aldriely Lima' --flow_id 6 --category 'Aguardando atendimento'
+# python3 main.py --agent 'Rosilene Mendes' --flow_id 3 --category 'Aguardando atendimento'
+# python3 main.py --agent 'Douglas Oliveira' --flow_id 7 --category 'Aguardando atendimento'
 
 import os
 import time
@@ -11,7 +15,7 @@ from dataclasses import dataclass
 from models.agendor import AgendorAPI
 from models.wapi import WAPI
 from models.flow import Flow, FlowActionType
-from models.utils import Args, GetIdByJson
+from models.utils import Args, LoadObjectCfn
 
 load_dotenv()
 
@@ -34,10 +38,9 @@ class AgentCredentials:
 
 @dataclass
 class Agent:
-    id: int
     name: str
     first_name: str
-    creds: AgentCredentials
+    creds: list[AgentCredentials]
 
 @dataclass
 class Client:
@@ -49,48 +52,38 @@ class Client:
     phone: str
     owner_id: int
 
-agent_data = GetIdByJson.get_by_id('configs/agents.json', args.agent_id)
-flow_data = GetIdByJson.get_by_id('configs/flows.json', args.flow_id)
+agent_data = LoadObjectCfn.by_name('configs/agents.json', args.agent)
+flow_data = LoadObjectCfn.by_id('configs/flows.json', args.flow_id)
 
 flow = Flow(**flow_data)
+agendor_api = AgendorAPI()
 agent = Agent(
-    id=agent_data.get('id'),
     name=agent_data.get('name'),
     first_name=agent_data.get('name').split()[0],
-    creds=AgentCredentials(
-        instance_id=os.getenv(agent_data.get('creds').get('instance_id')),
-        instance_token=os.getenv(agent_data.get('creds').get('instance_token'))
-    )
+    creds=[
+        AgentCredentials(
+            instance_id=os.getenv(creds.get('instance_id')),
+            instance_token=os.getenv(creds.get('instance_token'))
+        ) for creds in agent_data.get('creds')
+    ]
 )
-
-agendor_api = AgendorAPI()
-w_api = WAPI(
-    instance_id=agent.creds.instance_id,
-    instance_token=agent.creds.instance_token
-)
-
-filters={
-    'category': args.category,
-    'owner_id': args.agent_id
-}
 
 clients = agendor_api.get_people_stream(
-    since=args.datetime,
-    filters=filters
+    since=args.since,
+    category=args.category,
+    agent=args.agent,
+    limit=args.limit
 )
-
-# limit number of clients to be contacted
-clients_filtered = clients[:args.limit]
+print(clients, end='\n\n')
 
 # confirmation section
-print(f'Extract clients updates from: {args.category})')
-print(f'Agent: {agent.id} ({agent.name})')
-print(f'Flow: {flow.id} ({flow.description})')
-print(f'Since: {args.datetime}')
+print(f'Category: {args.category})')
+print(f'Agent: {agent.name}')
+print(f'Flow: {flow.description} ({flow.id})')
+print(f'Since: {args.since if args.since else ''}')
 print(f'Number of clients extracted: {len(clients)}')
-print(f'Number to be contacted: {len(clients_filtered)}')
-print(f'interval in secods: {round(args.interval/60, 2)} min ({args.interval} secs)')
-print(f'Filter was applied: {filters}')
+exit()
+
 choice = input('Do you confirm starting the WhatsApp campaign with above parameters (Y/N)? ').upper()
 if choice == 'Y':
     logging.info('Campaign started successfully!')
@@ -101,8 +94,14 @@ else:
     print('invalid option!')
     exit()
 
-for client in clients_filtered:
+for client in clients:
     client = Client(**client)
+
+    choiced_instance = random.choice(agent.creds)
+    w_api = WAPI(
+        instance_id=choiced_instance.instance_id,
+        instance_token=choiced_instance.instance_token
+    )
 
     logging.info(f'contacting client: {client.name} ({client.cpf}) | phone: {client.phone} | owner: {agent.name}')
     for action_loop in flow.actions:
@@ -111,7 +110,7 @@ for client in clients_filtered:
         logging.info(f"-- triggering type: {action.type}")
 
         if not w_api.check_number_status(phone=client.phone):
-            logging.warning(f"-- client {client.first_name} ({client.cpf}): phone incorrect, skipping to next client")
+            logging.warning(f'-- client {client.first_name} ({client.cpf}): phone incorrect, skipping to next client')
             payload = Flow.replace_text_by_variables(
                 text="{'cpf': '{{client.cpf}}', 'category': 'Telefone incorreto', 'customFields': {'contato_via': 'Disparo'}}",
                 vars={'{{client.cpf}}': client.cpf}
@@ -193,6 +192,6 @@ for client in clients_filtered:
                 payload=payload
             )
 
-    time.sleep(args.interval)
+    time.sleep(random.randint(30, 180))
 
 logging.info('Campaign finished successfully!')

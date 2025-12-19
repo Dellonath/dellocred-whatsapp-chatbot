@@ -4,13 +4,6 @@ import json
 from dotenv import load_dotenv
 load_dotenv()
 
-class FilterPerson:
-    @staticmethod
-    def apply_filter(person: dict, filters: str) -> list:
-        for key, value in filters.items():
-            if person.get(key) != value: return False
-        return True
-
 class AgendorAPI:
     def __init__(self):
         self.token = os.getenv('AGENDOR_TOKEN')
@@ -20,13 +13,20 @@ class AgendorAPI:
             'Content-Type': 'application/json'
         }
 
-    def get_people_stream(self, since: str, filters: dict=None) -> list:
-        people=[]
-        url=f'{self.base_url}/people/stream?since={since}'
+    def get_people_stream(self, since: str, agent: str, category: int, limit: int) -> list:
         params = {
-            'since': since,
-            'per_page': 50
+            'per_page': 50,
+            'category': self.__get_category_id(category=category),
+            'userOwner': self.__get_owner_id(owner=agent),
         }
+
+        if since:
+            url=f'{self.base_url}/people/stream'
+            params['since'] = since
+        else:
+            url = f'{self.base_url}/people'
+
+        people=[]
         while True:
             response = requests.get(
                 url,
@@ -35,17 +35,9 @@ class AgendorAPI:
             ).json()
 
             for person in response['data']:
-                person_data = {
-                    'id': person.get('id'),
-                    'cpf': person.get('cpf'),
-                    'category': person.get('category').get('name'),
-                    'name': person.get('name'),
-                    'first_name': person.get('name').split(' ')[0],
-                    'phone': person.get('contact').get('whatsapp'),
-                    'owner_id': person.get('ownerUser').get('id')
-                }
-                if FilterPerson.apply_filter(person_data, filters): people.append(person_data)
-
+                person_data = self.__format_person_data(person)
+                people.append(person_data)
+                if len(people) == limit: return people
             if 'next' in response['links']:
                 url = response.get('links').get('next')
             else: break
@@ -59,6 +51,35 @@ class AgendorAPI:
             json=json.loads(payload)
         )
         return response
+
+    def __get_category_id(self, category: str) -> int:
+        response = requests.get(
+            'https://api.agendor.com.br/v3/categories',
+            headers=self.__headers
+        ).json()
+        for cat in response['data']:
+            if cat.get('name') == category: return cat.get('id')
+        raise ValueError(f"Category '{category}' was not found")
+
+    def __get_owner_id(self, owner: str) -> int:   
+        response = requests.get(
+            'https://api.agendor.com.br/v3/users',
+            headers=self.__headers
+        ).json()
+        for usr in response['data']:
+            if usr.get('name') == owner: return usr.get('id')   
+        raise ValueError(f"User '{owner}' was not found")
+
+    def __format_person_data(self, person: dict):
+        return  {
+            'id': person.get('id'),
+            'cpf': person.get('cpf'),
+            'category': person.get('category').get('name'),
+            'name': person.get('name'),
+            'first_name': person.get('name').split(' ')[0],
+            'phone': person.get('contact').get('whatsapp'),
+            'owner_id': person.get('ownerUser').get('id')
+        }
 
 
 # agendor_api = AgendorAPI()

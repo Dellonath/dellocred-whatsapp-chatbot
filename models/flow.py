@@ -68,8 +68,7 @@ class Flow:
         self.active = active
         self.description = description
         self.actions = [self.__create_action(action) for action in actions]
-        if not self.active:
-            raise Exception(f'-- flow id {self.id} is inactive')
+        assert self.active, f'-- flow id {self.id} is inactive'
 
     def __create_action(self, action: dict):
         action_type: str = action.get('type')
