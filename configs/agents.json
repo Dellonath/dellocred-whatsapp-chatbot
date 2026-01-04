@@ -3,6 +3,7 @@
         "name": "Douglas Oliveira",
         "creds": [
             {
+                "active": false,
                 "instance_id": "WAPI_INSTANCE_ID_ALIMA",
                 "instance_token": "WAPI_INSTANCE_TOKEN_ALIMA"
             }
@@ -12,6 +13,7 @@
         "name": "Aldriely Lima",
         "creds": [
             {
+                "active": false,
                 "instance_id": "WAPI_INSTANCE_ID_ALIMA",
                 "instance_token": "WAPI_INSTANCE_TOKEN_ALIMA"
             }
@@ -21,8 +23,14 @@
         "name": "Rosilene Mendes",
         "creds": [
             {
-                "instance_id": "WAPI_INSTANCE_ID_RMENDES",
-                "instance_token": "WAPI_INSTANCE_TOKEN_RMENDES"
+                "active": true,
+                "instance_id": "WAPI_INSTANCE_ID_CHIP1",
+                "instance_token": "WAPI_INSTANCE_TOKEN_CHIP1"
+            },
+            {
+                "active": false,
+                "instance_id": "WAPI_INSTANCE_ID_CHIP2",
+                "instance_token": "WAPI_INSTANCE_TOKEN_CHIP2"
                 
             }
         ]
@@ -31,6 +39,7 @@
         "name": "Danielle Oliveira",
         "creds": [
             {
+                "active": false,
                 "instance_id": "WAPI_INSTANCE_ID_DOLIV",
                 "instance_token": "WAPI_INSTANCE_TOKEN_DOLIV"
             }
