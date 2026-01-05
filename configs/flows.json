@@ -446,7 +446,7 @@
     {
         "id": 9,
         "active": true,
-        "description": "Disparo de produtos geral",
+        "description": "Disparo de produtos geral para Rosilene Mendes",
         "actions": [
             {
                 "type": "random",
@@ -464,7 +464,7 @@
                                         {
                                             "type": "URL", 
                                             "button_text": "Sim! Falar com um atendente",
-                                            "url": "https://wa.me/5535988629435?text=Ol%C3%A1%20Rosilene%2C%20quero%20uma%20simula%C3%A7%C3%A3o%20sem%20compromisso."
+                                            "url": "https://wa.me/5535988629435?text=Ol%C3%A1%2C%20quero%20uma%20simula%C3%A7%C3%A3o%20sem%20compromisso."
                                         },
                                         {
                                             "type": "URL", 
@@ -481,7 +481,7 @@
                         }
                     },
                     {
-                        "prob": 0.3,
+                        "prob": 0.25,
                         "action": {
                             "type": "send_carousel",
                             "message": "Olá, falo com {{client.first_name}}? Tudo jóia? Espero que sim!\n\nSomos a *Dellocred* e viemos alegrar seu dia ainda mais!",
@@ -493,7 +493,7 @@
                                         {
                                             "type": "URL", 
                                             "button_text": "Sim! Falar com um atendente",
-                                            "url": "https://wa.me/5535988629435?text=Ol%C3%A1%20Rosilene%2C%20quero%20uma%20simula%C3%A7%C3%A3o%20sem%20compromisso."
+                                            "url": "https://wa.me/5535988629435?text=Ol%C3%A1%2C%20quero%20uma%20simula%C3%A7%C3%A3o%20sem%20compromisso."
                                         },
                                         {
                                             "type": "URL", 
@@ -502,7 +502,7 @@
                                         },
                                         {
                                             "type": "REPLAY",
-                                            "button_text": "Não me perturbe"
+                                            "button_text": "Cancelar minha inscrição"
                                         }
                                     ]
                                 }
@@ -510,7 +510,7 @@
                         }
                     },
                     {
-                        "prob": 0.3,
+                        "prob": 0.25,
                         "action": {
                             "type": "send_carousel",
                             "message": "Olá {{client.first_name}}? Como vai? Esperamos que esteja bem!\n\nSomos a *Dellocred* e viemos te trazer uma *ÓTIMA* notícia hoje: há uma possível linha de crédito liberada no seu nome! Sim, isso mesmo!",
@@ -522,7 +522,7 @@
                                         {
                                             "type": "URL", 
                                             "button_text": "Sim! Falar com um atendente",
-                                            "url": "https://wa.me/5535988629435?text=Ol%C3%A1%20Rosilene%2C%20quero%20uma%20simula%C3%A7%C3%A3o%20sem%20compromisso."
+                                            "url": "https://wa.me/5535988629435?text=Ol%C3%A1%2C%20quero%20uma%20simula%C3%A7%C3%A3o%20sem%20compromisso."
                                         },
                                         {
                                             "type": "URL", 
@@ -531,7 +531,7 @@
                                         },
                                         {
                                             "type": "REPLAY",
-                                            "button_text": "Não me perturbe"
+                                            "button_text": "Cancelar minha inscrição"
                                         }
                                     ]
                                 }
@@ -539,10 +539,32 @@
                         }
                     },
                     {
-                        "prob": 0.15,
+                        "prob": 0.25,
                         "action": {
-                            "type": "send_message",
-                            "message": "Olá, falo com {{client.first_name}}?"
+                            "type": "send_carousel",
+                            "message": "Olá {{client.first_name}}? Esperamos que esteja tudo bem contigo!\n\nSomos a *Dellocred* e viemos te trazer uma *EXCELENTE* notícia: há uma possível linha de crédito liberada no seu nome! Sim, isso mesmo!",
+                            "cards": [
+                                {
+                                    "text": "Gostaria de receber uma simulação *sem compromisso* e *segura*?\n\nAh, muito cuidado com golpes! *NENHUM* valor será solicitado. Em caso de dúvidas, poderá esclarece-las com nosso atendente.",
+                                    "image": "https://res.cloudinary.com/dg0nvnjqw/image/upload/v1767203639/portabilidade.png",
+                                    "buttons": [
+                                        {
+                                            "type": "URL", 
+                                            "button_text": "Sim! Falar com um atendente",
+                                            "url": "https://wa.me/5535988629435?text=Ol%C3%A1%2C%20quero%20uma%20simula%C3%A7%C3%A3o%20sem%20compromisso."
+                                        },
+                                        {
+                                            "type": "URL", 
+                                            "button_text": "Conhecer nosso instagram",
+                                            "url": "https://www.instagram.com/reel/DSCsVy4ETg7/?igsh=MXJ5MjNsZDZrN2dwaw=="
+                                        },
+                                        {
+                                            "type": "REPLAY",
+                                            "button_text": "Cancelar minha inscrição"
+                                        }
+                                    ]
+                                }
+                            ]
                         }
                     }
                 ]
