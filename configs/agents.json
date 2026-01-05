@@ -1,7 +1,25 @@
 [
     {
+        "name": "Geral",
+        "instances": [
+            {
+                "active": true,
+                "phone": "553597693994",
+                "instance_id": "WAPI_INSTANCE_ID_CHIP1",
+                "instance_token": "WAPI_INSTANCE_TOKEN_CHIP1"
+            },
+            {
+                "active": true,
+                "phone": "553597082862",
+                "instance_id": "WAPI_INSTANCE_ID_CHIP2",
+                "instance_token": "WAPI_INSTANCE_TOKEN_CHIP2"
+                
+            }
+        ]
+    },
+    {
         "name": "Douglas Oliveira",
-        "creds": [
+        "instances": [
             {
                 "active": false,
                 "instance_id": "WAPI_INSTANCE_ID_ALIMA",
@@ -11,7 +29,7 @@
     },
     {
         "name": "Aldriely Lima",
-        "creds": [
+        "instances": [
             {
                 "active": false,
                 "instance_id": "WAPI_INSTANCE_ID_ALIMA",
@@ -21,14 +39,16 @@
     },
     {
         "name": "Rosilene Mendes",
-        "creds": [
+        "instances": [
             {
                 "active": true,
+                "phone": "553597693994",
                 "instance_id": "WAPI_INSTANCE_ID_CHIP1",
                 "instance_token": "WAPI_INSTANCE_TOKEN_CHIP1"
             },
             {
-                "active": false,
+                "active": true,
+                "phone": "553597082862",
                 "instance_id": "WAPI_INSTANCE_ID_CHIP2",
                 "instance_token": "WAPI_INSTANCE_TOKEN_CHIP2"
                 
@@ -37,7 +57,7 @@
     },
     {
         "name": "Danielle Oliveira",
-        "creds": [
+        "instances": [
             {
                 "active": false,
                 "instance_id": "WAPI_INSTANCE_ID_DOLIV",

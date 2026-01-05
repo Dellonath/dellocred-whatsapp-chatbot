@@ -53,6 +53,7 @@ class WAPI:
 
         if response.status_code != 200:
             raise Exception('Error sending audio actions:', response.text)
+        return response.json()
 
     def send_audio(self, phone: str, audio_url: str, delay: int) -> dict:
         phone = Phone.format_phone_number(phone)
@@ -72,6 +73,7 @@ class WAPI:
 
         if response.status_code != 200:
             raise Exception('Error sending audio actions:', response.text)
+        return response.json()
 
     def send_video(self, phone: str, video_url: str, delay: int) -> dict:
         phone = Phone.format_phone_number(phone)
@@ -91,6 +93,7 @@ class WAPI:
 
         if response.status_code != 200:
             raise Exception('Error sending video actions:', response.text)
+        return response.json()
 
     def send_button_actions(self, phone: str, message: str, buttons: list[ButtonActionsActionOptions]) -> dict:
         phone = Phone.format_phone_number(phone)

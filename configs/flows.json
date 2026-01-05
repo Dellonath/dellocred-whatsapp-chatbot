@@ -473,7 +473,7 @@
                                         },
                                         {
                                             "type": "REPLAY",
-                                            "button_text": "Não me perturbe"
+                                            "button_text": "Cancelar minha inscrição"
                                         }
                                     ]
                                 }
@@ -481,7 +481,7 @@
                         }
                     },
                     {
-                        "prob": 0.25,
+                        "prob": 0.3,
                         "action": {
                             "type": "send_carousel",
                             "message": "Olá, falo com {{client.first_name}}? Tudo jóia? Espero que sim!\n\nSomos a *Dellocred* e viemos alegrar seu dia ainda mais!",
@@ -510,7 +510,7 @@
                         }
                     },
                     {
-                        "prob": 0.25,
+                        "prob": 0.3,
                         "action": {
                             "type": "send_carousel",
                             "message": "Olá {{client.first_name}}? Como vai? Esperamos que esteja bem!\n\nSomos a *Dellocred* e viemos te trazer uma *ÓTIMA* notícia hoje: há uma possível linha de crédito liberada no seu nome! Sim, isso mesmo!",
@@ -539,7 +539,7 @@
                         }
                     },
                     {
-                        "prob": 0.25,
+                        "prob": 0.15,
                         "action": {
                             "type": "send_message",
                             "message": "Olá, falo com {{client.first_name}}?"
