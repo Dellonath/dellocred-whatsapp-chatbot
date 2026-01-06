@@ -1,0 +1,31 @@
+{
+    "id": 7,
+    "active": false,
+    "description": "Disparo de carrossel",
+    "actions": [
+        {
+            "type": "send_carousel",
+            "message": "Olá, {{client.first_name}}, tudo bem? Sou {{agent.first_name}}, consultora especialista de crédito da Dellocred, autorizada do Banco do Brasil.",
+            "cards": [
+                {
+                    "text": "Gostaria de receber uma simulação sem compromisso?",
+                    "image": "https://res.cloudinary.com/dg0nvnjqw/image/upload/v1764680959/bb-whatsapp-carrocel-1_sp7pfd.png",
+                    "buttons": [
+                        {
+                            "type": "REPLAY",
+                            "button_text": "Sim, quero simular!"
+                        },
+                        {
+                            "type": "REPLAY",
+                            "button_text": "Não no momento, obrigado!"
+                        },
+                        {
+                            "type": "REPLAY",
+                            "button_text": "Não me pertube."
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

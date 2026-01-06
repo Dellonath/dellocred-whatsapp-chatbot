@@ -1,0 +1,86 @@
+{
+    "id": 3,
+    "active": false,
+    "description": "Disparo de oportunidade para portabilidade",
+    "actions": [
+        {
+            "type": "random",
+            "choices": [
+                {
+                    "prob": 0.4,
+                    "action": {
+                        "type": "send_audio",
+                        "audio_url": "https://audio.jukehost.co.uk/aRj1U3HeGBeef0piiizzvtMuQVgXZxTs.ogg"
+                    }
+                },
+                {
+                    "prob": 0.1,
+                    "action": {
+                        "type": "send_message",
+                        "message": "Olá! {{client.first_name}}, tudo bem? Sou {{agent.first_name}}, consultora especialista em crédito da Dellocred.\nNotei pelo seu cadastro uma possível linha de portabilidade com troco, sem precisar de margem.\nMe envie o extrato de consignado para uma simulação sem compromisso. Aguardo!",
+                        "delay": 2
+                    }
+                },
+                {
+                    "prob": 0.25,
+                    "action": {
+                        "type": "send_carousel",
+                        "message": "Olá, {{client.first_name}}, tudo bem? Sou {{agent.first_name}}, consultora especialista de crédito da Dellocred.",
+                        "cards": [
+                            {
+                                "text": "Gostaria de receber uma simulação de portabilidade com troco, sem precisar de margem? Me envie o extrato de consignado para uma simulação sem compromisso.",
+                                "image": "https://res.cloudinary.com/dg0nvnjqw/image/upload/v1764937784/portabilidade-whatsapp-carrocel-1_m4nbwa.jpg",
+                                "buttons": [
+                                    {
+                                        "type": "REPLAY",
+                                        "button_text": "Sim, quero simular!"
+                                    },
+                                    {
+                                        "type": "REPLAY",
+                                        "button_text": "Não no momento, obrigado!"
+                                    },
+                                    {
+                                        "type": "REPLAY",
+                                        "button_text": "Não me pertube."
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "prob": 0.25,
+                    "action": {
+                        "type": "send_carousel",
+                        "message": "Oi {{client.first_name}}, tudo bem? Me chamo {{agent.first_name}}, consultora especialista de crédito da Dellocred.",
+                        "cards": [
+                            {
+                                "text": "Gostaria de receber uma simulação de portabilidade com troco, sem precisar de margem? Só me enviar o extrato de consignado para uma simulação segura e sem compromisso.",
+                                "image": "https://res.cloudinary.com/dg0nvnjqw/image/upload/v1764937784/portabilidade-whatsapp-carrocel-1_m4nbwa.jpg",
+                                "buttons": [
+                                    {
+                                        "type": "REPLAY",
+                                        "button_text": "Sim, quero simular!"
+                                    },
+                                    {
+                                        "type": "REPLAY",
+                                        "button_text": "Não no momento, obrigado!"
+                                    },
+                                    {
+                                        "type": "REPLAY",
+                                        "button_text": "Não me pertube."
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "type": "webhook",
+            "endpoint": "https://api.agendor.com.br/v3/people/upsert",
+            "payload": "{'cpf': '{{client.cpf}}', 'category': 'Aguardando retorno', 'customFields': {'contato_via': 'Disparo'}}"
+        }
+    ]
+}

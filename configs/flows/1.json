@@ -1,0 +1,21 @@
+{
+    "id": 1,
+    "active": false,
+    "description": "Disparo de mensagem de crédito Banco do Brasil",
+    "actions": [
+        {
+            "type": "send_message",
+            "message": "Olá, tudo bem? Sou {{agent.first_name}}, consultora especialista de crédito da Dellocred, autorizada do Banco do Brasil. Falo com {{client.first_name}}? \n\nVi uma possível oportunidade de crédito no seu nome e gostaria de saber gostaria de receber uma simulação sem compromisso.",
+            "delay": 2
+        },
+        {
+            "type": "send_audio",
+            "audio_url": "https://audio.jukehost.co.uk/WfDsaBkFCOVJW8ogPb8G9Wh7J2w6TClM.ogg"
+        },
+        {
+            "type": "webhook",
+            "endpoint": "https://api.agendor.com.br/v3/people/upsert",
+            "payload": "{'cpf': '{{client.cpf}}', 'category': 'Aguardando retorno', 'customFields': {'contato_via': 'Disparo'}}"
+        }
+    ]
+}

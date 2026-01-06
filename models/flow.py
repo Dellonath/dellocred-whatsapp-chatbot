@@ -4,6 +4,7 @@ from enum import Enum
 class FlowActionType(Enum):
     SEND_MESSAGE = 'send_message'
     SEND_AUDIO = 'send_audio'
+    SEND_IMAGE = 'send_image'
     SEND_VIDEO = 'send_video'
     SEND_BUTTON_ACTIONS = 'send_button_actions'
     SEND_CAROUSEL = 'send_carousel'
@@ -20,6 +21,12 @@ class MessageAction:
 class AudioAction:
     audio_url: str
     type: str = field(default=FlowActionType.SEND_AUDIO.value, init=False)
+    delay: int = field(default=1)
+
+@dataclass
+class ImageAction:
+    image_url: str
+    type: str = field(default=FlowActionType.SEND_IMAGE.value, init=False)
     delay: int = field(default=1)
 
 @dataclass
@@ -87,6 +94,10 @@ class Flow:
         elif action_type == FlowActionType.SEND_AUDIO.value:
             return AudioAction(
                 audio_url=action.get('audio_url')
+            )
+        elif action_type == FlowActionType.SEND_IMAGE.value:
+            return ImageAction(
+                image_url=action.get('image_url')
             )
         elif action_type == FlowActionType.SEND_VIDEO.value:
             return VideoAction(

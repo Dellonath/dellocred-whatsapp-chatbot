@@ -2,14 +2,15 @@
 # python3 main.py --agent 'Rosilene Mendes' --flow_id 3 --category 'Cliente em potencial' --limit 40 --datetime 2025-11-23T06:00:00Z
 # python3 main.py --agent 'Douglas Oliveira' --flow_id 7 --category 'Cliente em potencial' --limit 40 --datetime 2025-12-01T06:00:00Z
 
-# python3 main.py --agent 'Aldriely Lima' --flow_id 6 --category 'Aguardando atendimento'
-# python3 main.py --agent 'Rosilene Mendes' --flow_id 9 --category 'Aguardando atendimento'
+# python3 main.py --agent 'Aldriely Lima' --flow_name disparo_consignado_siape_bb --category 'Aguardando atendimento' --payroll Siape
+# python3 main.py --agent 'Rosilene Mendes' --flow_name portabilidade_direcionado_rosilene --category 'Aguardando atendimento'
 # python3 main.py --agent 'Douglas Oliveira' --flow_id 8 --category 'Aguardando atendimento'
 
 import os
 import logging
 import random
 import time
+import json
 from dotenv import load_dotenv
 from dataclasses import dataclass
 from models.agendor import AgendorAPI
@@ -53,11 +54,14 @@ class Client:
     first_name: str
     phone: str
     owner_id: int
+    payroll: str
 
 agent_data = LoadObjectCfn.by_name('configs/agents.json', args.agent)
-flow_data = LoadObjectCfn.by_id('configs/flows.json', args.flow_id)
 
-flow = Flow(**flow_data)
+with open(f'configs/flows/{args.flow_name}.json', 'r') as f:
+    flow_cfg = json.load(f)
+
+flow = Flow(**flow_cfg)
 agendor_api = AgendorAPI()
 agent = Agent(
     name=agent_data.get('name'),
@@ -76,15 +80,17 @@ clients = agendor_api.get_people_stream(
     since=args.since,
     category=args.category,
     agent=args.agent,
-    limit=args.limit
+    limit=args.limit,
+    payroll=args.payroll
 )
 
 # confirmation section
-print(f'Category: {args.category}')
 print(f'Agent: {agent.name}')
 print(f'Flow: {flow.description} ({flow.id})')
-print(f'Since: {args.since if args.since else ''}')
 print(f'Number of clients extracted: {len(clients)}')
+print(f'Category: {args.category}')
+print(f'Payroll: {args.payroll}') if args.payroll else None
+print(f'Since: {args.since}') if args.since else None
 
 choice = input('Do you confirm starting the WhatsApp campaign with above parameters (Y/N)? ').upper()
 if choice == 'Y':

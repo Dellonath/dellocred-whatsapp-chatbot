@@ -13,11 +13,12 @@ class AgendorAPI:
             'Content-Type': 'application/json'
         }
 
-    def get_people_stream(self, since: str, agent: str, category: int, limit: int) -> list:
+    def get_people_stream(self, since: str, agent: str, category: int, limit: int, payroll: str) -> list:
         params = {
             'per_page': 50,
             'category': self.__get_category_id(category=category),
             'userOwner': self.__get_owner_id(owner=agent),
+            'withCustomFields': 'true'
         }
 
         if since:
@@ -36,7 +37,11 @@ class AgendorAPI:
 
             for person in response['data']:
                 person_data = self.__format_person_data(person)
-                people.append(person_data)
+                if payroll:
+                    if person_data.get('payroll') == payroll:
+                        people.append(person_data)
+                else:
+                    people.append(person_data)
                 if len(people) == limit: return people
             if 'next' in response['links']:
                 url = response.get('links').get('next')
@@ -78,7 +83,8 @@ class AgendorAPI:
             'name': person.get('name'),
             'first_name': person.get('name').split(' ')[0],
             'phone': person.get('contact').get('whatsapp'),
-            'owner_id': person.get('ownerUser').get('id')
+            'owner_id': person.get('ownerUser').get('id'),
+            'payroll': person.get('customFields', []).get('convenio').get('value')
         }
 
 

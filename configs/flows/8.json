@@ -1,0 +1,114 @@
+{
+    "id": 8,
+    "active": false,
+    "description": "Disparo de produtos geral",
+    "actions": [
+        {
+            "type": "random",
+            "choices": [
+                {
+                    "prob": 0.2,
+                    "action": {
+                        "type": "send_button_actions",
+                        "message": "Olá {{client.first_name}}, como você vai? Espero que tudo bem!\n\nSomos a Dellocred, empresa especialista e certificada por diversos bancos.\n\nGostaria de trazer uma *ÓTIMA NOTÍCIA* para você hoje: há uma possível linha de crédito liberada no seu nome, gostaria de uma simulação *sem compromisso* para verificar as condições de crédito disponíveis no seu perfil? Só clicar no botão abaixo para falar com um de nossos atendentes especializados.",
+                        "buttons": [
+                            {
+                                "type": "URL", 
+                                "button_text": "Sim! Falar com um atendente",
+                                "url": "https://wa.me/5535988629435?text=Ol%C3%A1%20Rosilene%2C%20quero%20uma%20simula%C3%A7%C3%A3o%20sem%20compromisso."
+                            },
+                            {
+                                "type": "URL", 
+                                "buttonText": "Conheça a Dellocred",
+                                "url": "https://www.instagram.com/reel/DSCsVy4ETg7/?igsh=MXJ5MjNsZDZrN2dwaw=="
+                            },
+                            {
+                                "type": "REPLAY",
+                                "button_text": "Não me perturbe"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "prob": 0.3,
+                    "action": {
+                        "type": "send_carousel",
+                        "message": "Olá {{client.first_name}}? Tudo bem contigo? Espero que sim! Vim melhorar o seu dia: notamos uma possível linha de crédito liberado para você nesse momento. Gostaria de receber uma simulação *sem compromisso* e *segura*? Só clicar no botão abaixo para falar com um de nossos atendentes especializados.",
+                        "cards": [
+                            {
+                                "text": "Notei uma possível linha de crédito liberado para você. Gostaria de receber uma simulação sem compromisso?",
+                                "image": "https://res.cloudinary.com/dg0nvnjqw/image/upload/v1767203639/portabilidade.png",
+                                "buttons": [
+                                    {
+                                        "type": "URL", 
+                                        "button_text": "Sim! Falar com um atendente.",
+                                        "url": "https://wa.me/5535988629435?text=Ol%C3%A1%20Rosilene%2C%20quero%20uma%20simula%C3%A7%C3%A3o%20sem%20compromisso."
+                                    },
+                                    {
+                                        "type": "REPLAY",
+                                        "button_text": "Não no momento, obrigado!"
+                                    },
+                                    {
+                                        "type": "REPLAY",
+                                        "button_text": "Não me pertube."
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "prob": 0.1,
+                    "action": {
+                        "type": "send_video",
+                        "video_url": "https://res.cloudinary.com/dg0nvnjqw/video/upload/v1767373350/Conhec%CC%A7a_a_dellocred_veqhtm.mov"
+                    }
+                },
+                {
+                    "prob": 0.1,
+                    "action": {
+                        "type": "send_audio",
+                        "audio_url": "https://audio.jukehost.co.uk/aRj1U3HeGBeef0piiizzvtMuQVgXZxTs.ogg"
+                    }
+                },
+                {
+                    "prob": 0.3,
+                    "action": {
+                        "type": "send_carousel",
+                        "message": "Olá, falo com {{client.first_name}}? Tudo bem? Somos a Dellocred, empresa especializada em crédito e estamos aqui para melhorar seu dia ainda mais! \n\nNotei uma possível linha de crédito liberado para você. Gostaria de receber uma simulação *sem compromisso* e *segura*? Só clicar no botão abaixo para falar com um de nossos atendentes especializados.",
+                        "cards": [
+                            {
+                                "text": "Notei uma possível linha de crédito liberado para você. Gostaria de receber uma simulação *sem compromisso* e *segura*?",
+                                "image": "https://res.cloudinary.com/dg0nvnjqw/image/upload/v1767203639/portabilidade.png",
+                                "buttons": [
+                                    {
+                                        "type": "URL", 
+                                        "button_text": "Sim! Falar com um atendente.",
+                                        "url": "https://wa.me/5535988629435?text=Ol%C3%A1%20Rosilene%2C%20quero%20uma%20simula%C3%A7%C3%A3o%20sem%20compromisso."
+                                    },
+                                    {
+                                        "type": "REPLAY",
+                                        "button_text": "Não no momento, obrigado!"
+                                    },
+                                    {
+                                        "type": "REPLAY",
+                                        "button_text": "Não me pertube."
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "type": "send_message",
+            "message": "OBS: Cuidado com golpes! A Dellocred jamais solicitará pagamentos adiantados ou dados bancários sensíveis como senhas ou códigos de verificação. Em caso de dúvidas, poderá esclarece-las com nosso atendente."
+        },
+        {
+            "type": "webhook",
+            "endpoint": "https://api.agendor.com.br/v3/people/upsert",
+            "payload": "{'cpf': '{{client.cpf}}', 'category': 'Aguardando retorno', 'customFields': {'contato_via': 'Disparo'}}"
+        }
+    ]
+}

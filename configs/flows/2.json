@@ -1,0 +1,24 @@
+{
+    "id": 2,
+    "active": false,
+    "description": "Disparo de áudio de crédito Banco do Brasil",
+    "actions": [
+        {
+            "type": "send_audio",
+            "audio_url": "https://audio.jukehost.co.uk/qCcIBfdY7LKWq9dOdgmA3mFqLzH4qxuC.ogg"
+        },
+        {
+            "type": "wait",
+            "seconds": 5
+        },
+        {
+            "type": "send_audio",
+            "audio_url": "https://audio.jukehost.co.uk/X7XLmZTpSSIFdF6Lef2PxLD3clJY8HMg.ogg"
+        },
+        {
+            "type": "webhook",
+            "endpoint": "https://api.agendor.com.br/v3/people/upsert",
+            "payload": "{'cpf': '{{client.cpf}}', 'category': 'Aguardando retorno', 'customFields': {'contato_via': 'Disparo'}}"
+        }
+    ]
+}

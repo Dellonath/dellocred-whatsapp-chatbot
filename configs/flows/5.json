@@ -1,0 +1,35 @@
+{
+    "id": 5,
+    "active": false,
+    "description": "Disparo de probabilidade",
+    "actions": [
+        {
+            "type": "random",
+            "choices": [
+                {
+                    "prob": 0.4,
+                    "action": {
+                        "type": "send_message",
+                        "message": "Olá, tenho prob 0.2",
+                        "delay": 2
+                    }
+                },
+                {
+                    "prob": 0.3,
+                    "action": {
+                        "type": "send_message",
+                        "message": "Olá, tenho prob 0.4",
+                        "delay": 2
+                    }
+                },
+                {
+                    "prob": 0.3,
+                    "action": {
+                        "type": "send_audio",
+                        "audio_url": "https://audio.jukehost.co.uk/qCcIBfdY7LKWq9dOdgmA3mFqLzH4qxuC.ogg"
+                    }
+                }
+            ]
+        }
+    ]
+}

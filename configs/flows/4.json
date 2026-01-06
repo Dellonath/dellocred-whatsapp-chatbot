@@ -1,0 +1,53 @@
+{
+    "id": 4,
+    "active": false,
+    "description": "Disparo de botão com ação com probabilidade",
+    "actions": [
+        {
+            "type": "random",
+            "choices": [
+                {
+                    "prob": 0.2,
+                    "action": {
+                        "type": "send_message",
+                        "message": "Olá, tenho prob 0.2",
+                        "delay": 2
+                    }
+                },
+                {
+                    "prob": 0.8,
+                    "action": {
+                        "type": "send_message",
+                        "message": "Olá, tenho prob 0.8",
+                        "delay": 2
+                    }
+                }
+            ]
+        },
+        {
+            "type": "send_button_actions",
+            "message": "Texto da mensagem",
+            "buttons": [
+                {
+                    "type": "CALL",
+                    "button_text": "Entrar em contato",
+                    "phone": "+559992249708"
+                },
+                {
+                    "type": "URL", 
+                    "button_text": "Visite nosso Site",
+                    "url": "https://w-api.app"
+                },
+                {
+                    "type": "URL", 
+                    "button_text": "Simule agora mesmo!",
+                    "url": "https://wa.me/5535998723079?text=Ol%C3%A1%2C%20quero%20simular!"
+                },
+                {
+                    "type": "REPLAY",
+                    "button_text": "Não perturbe"
+                }
+            ]
+        }
+    ]
+}

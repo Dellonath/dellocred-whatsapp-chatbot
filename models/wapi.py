@@ -52,7 +52,7 @@ class WAPI:
         )
 
         if response.status_code != 200:
-            raise Exception('Error sending audio actions:', response.text)
+            raise Exception('Error sending audio action:', response.text)
         return response.json()
 
     def send_audio(self, phone: str, audio_url: str, delay: int) -> dict:
@@ -72,7 +72,27 @@ class WAPI:
         )
 
         if response.status_code != 200:
-            raise Exception('Error sending audio actions:', response.text)
+            raise Exception('Error sending audio action:', response.text)
+        return response.json()
+
+    def send_image(self, phone: str, image_url: str, delay: int) -> dict:
+        phone = Phone.format_phone_number(phone)
+        payload = {
+            'phone': phone,
+            'image': image_url,
+            'delayMessage': delay
+        }
+
+        response = requests.request(
+            'POST',
+            f'{self.base_url}/message/send-image',
+            headers=self.__headers,
+            params=self.__params,
+            json=payload
+        )
+
+        if response.status_code != 200:
+            raise Exception('Error sending image action:', response.text)
         return response.json()
 
     def send_video(self, phone: str, video_url: str, delay: int) -> dict:
@@ -92,7 +112,7 @@ class WAPI:
         )
 
         if response.status_code != 200:
-            raise Exception('Error sending video actions:', response.text)
+            raise Exception('Error sending video action:', response.text)
         return response.json()
 
     def send_button_actions(self, phone: str, message: str, buttons: list[ButtonActionsActionOptions]) -> dict:
@@ -115,7 +135,7 @@ class WAPI:
             json=payload
         )
         if response.status_code != 200:
-            raise Exception('Error sending button actions:', response.text)
+            raise Exception('Error sending button action:', response.text)
         return response
 
     def send_carousel(self, phone: str, message: str, cards: list[CarouselCard]) -> dict:
@@ -147,7 +167,7 @@ class WAPI:
         )
 
         if response.status_code != 200:
-            raise Exception('Error sending button actions:', response.text)
+            raise Exception('Error sending button action:', response.text)
         return response
 
     def check_number_status(self, phone: str) -> dict:
