@@ -2,25 +2,35 @@ import os
 import string
 import random
 import time
-from dotenv import load_dotenv
+import json
 from dataclasses import dataclass, field
+from dotenv import load_dotenv
 from models.wapi import WAPI
 from models.flow import FlowActionType
 
 load_dotenv()
 
 @dataclass
-class AgentInstance:
+class Instance:
+    id: int
     active: bool
+    mature: bool
     name: str
     phone: str
     instance_id: int
     instance_token: int
-    block_sender: list[str] = field(default_factory=list)
+    block_instances_ids: list[str] = field(default_factory=list)
+    sender: list[str] = field(default=True)
 
-DELAY_BETWEEN_INTERACTIONS: int = random.randint(3, 20)
-
-ACTIONS = [
+DELAY_BETWEEN_INTERACTIONS: int = random.randint(3, 120)
+NUMBER_OF_INTERACTIONS: int = 300
+with open(f'configs/instances.json', 'r') as f:
+    INSTANCES: list[Instance] = [
+        Instance(**instance) for instance in json.load(f)
+        if instance.get('mature') 
+    ]
+   
+ACTIONS: list[dict] = [
     {
         'type': FlowActionType.SEND_MESSAGE,
         'prob': 0.7
@@ -35,59 +45,7 @@ ACTIONS = [
     }
 ]
 
-INSTANCES = [
-    {
-        "active": True,
-        "name": "Chip 1",
-        "phone": "553597693994",
-        "instance_id": "WAPI_INSTANCE_ID_CHIP1",
-        "instance_token": "WAPI_INSTANCE_TOKEN_CHIP1"
-    },
-    {
-        "active": True,
-        "name": "Chip 2",
-        "phone": "553597082862",
-        "instance_id": "WAPI_INSTANCE_ID_CHIP2",
-        "instance_token": "WAPI_INSTANCE_TOKEN_CHIP2"
-        
-    },
-    {
-        "active": True,
-        "name": "Rosilene Mendes Business",
-        "phone": "553588629435",
-        "instance_id": "WAPI_INSTANCE_ID_RMENDES",
-        "instance_token": "WAPI_INSTANCE_TOKEN_RMENDES",
-        "block_sender": [
-            "553599748699"
-        ]
-    },
-    {
-        "active": True,
-        "name": "Bianca Caetano Business",
-        "phone": "553591683067",
-        "instance_id": "WAPI_INSTANCE_ID_CHIP3",
-        "instance_token": "WAPI_INSTANCE_TOKEN_CHIP3" 
-    },
-    {
-        "active": True,
-        "name": "Danielle Oliveira Business",
-        "phone": "553591464882",
-        "instance_id": "WAPI_INSTANCE_ID_DOLIVEIRA",
-        "instance_token": "WAPI_INSTANCE_TOKEN_DOLIVEIRA" 
-    },
-    {
-        "active": True,
-        "name": "Douglas Oliveira Business",
-        "phone": "553599748699",
-        "instance_id": "WAPI_INSTANCE_ID_DOUGLASOLIVEIRA",
-        "instance_token": "WAPI_INSTANCE_TOKEN_DOUGLASOLIVEIRA",
-        "block_sender": [
-            "553588629435"
-        ]
-    }
-]
-
-AUDIOS = [
+AUDIOS: list[str] = [
     'https://res.cloudinary.com/dg0nvnjqw/video/upload/v1767726360/tagarela_4_secs_clapku.ogg',
     'https://res.cloudinary.com/dg0nvnjqw/video/upload/v1767726359/tagarela_5_secs_cyhygd.ogg',
     'https://res.cloudinary.com/dg0nvnjqw/video/upload/v1767726358/tagarela_6_secs_ejuglr.ogg',
@@ -102,7 +60,7 @@ AUDIOS = [
     'https://res.cloudinary.com/dg0nvnjqw/video/upload/v1767726218/tagarela_15_secs_bd0qoz.ogg'
 ]
 
-IMAGES = [
+IMAGES: list[str] = [
     'https://res.cloudinary.com/dg0nvnjqw/image/upload/v1764680916/main-sample.png',
     'https://res.cloudinary.com/dg0nvnjqw/image/upload/v1764680916/cld-sample-5.jpg',
     'https://res.cloudinary.com/dg0nvnjqw/image/upload/v1764680915/cld-sample-4.jpg',
@@ -120,23 +78,23 @@ def generate_random_text(chars=string.ascii_lowercase + string.ascii_uppercase +
         text.append(''.join(random.choices(chars, k=size_of_word)))
     return ' '.join(text)
 
-for _ in range(300):
+last_sender_id: int = None
+for _ in range(NUMBER_OF_INTERACTIONS):
 
-    active_instances: list[dict] = [instance for instance in INSTANCES if instance.get('active')]
-
-    sender_instance: AgentInstance = AgentInstance(
-        **random.choices(population=active_instances)[0]
+    sender_instance: Instance = random.choice(
+        seq=[instance for instance in INSTANCES if instance.sender]
     )
 
-    receiver_instances: list[AgentInstance] = random.choices(
-        population=[
-            AgentInstance(**instance) for instance in active_instances 
-            if instance.get('phone') != sender_instance.phone
-            and instance.get('phone') not in sender_instance.block_sender
-        ],
-        k=random.randint(1, len(active_instances) - 1)
-    )
+    receiver_instances: list[Instance] = [
+        instance for instance in INSTANCES 
+        if instance.id != sender_instance.id
+        and instance.id not in sender_instance.block_instances_ids
+    ]
 
+    receiver_instances: list[Instance] = random.sample(
+        population=receiver_instances, 
+        k=random.randint(1, 2)
+    )
     w_api: WAPI = WAPI(
         instance_id=os.getenv(sender_instance.instance_id),
         instance_token=os.getenv(sender_instance.instance_token),
@@ -156,10 +114,9 @@ for _ in range(300):
                 weights=[action['prob'] for action in ACTIONS],
             )[0]
 
-            seconds: int = random.randint(1, 15)
-            delay: int = random.randint(1, seconds)
+            delay: int = random.randint(1, 15)
 
-            print(f'-- sending {action}, waiting for {seconds} seconds...')
+            print(f'-- sending {action}, waiting for {delay} seconds...')
 
             if action == FlowActionType.SEND_MESSAGE:
                 request: dict = w_api.send_message(
@@ -182,7 +139,7 @@ for _ in range(300):
                     delay=delay
                 )
             
-            time.sleep(seconds)
+            time.sleep(delay+15)
 
     time.sleep(DELAY_BETWEEN_INTERACTIONS)
     

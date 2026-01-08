@@ -5,8 +5,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 class AgendorAPI:
-    def __init__(self):
-        self.token = os.getenv('AGENDOR_TOKEN')
+    def __init__(self, token: str):
+        self.token = token
         self.base_url = 'https://api.agendor.com.br/v3'
         self.__headers = {
             'Authorization': f'Token {self.token}',
@@ -37,6 +37,7 @@ class AgendorAPI:
 
             for person in response['data']:
                 person_data = self.__format_person_data(person)
+                # filtering data
                 if payroll:
                     if person_data.get('payroll') == payroll:
                         people.append(person_data)
@@ -86,8 +87,3 @@ class AgendorAPI:
             'owner_id': person.get('ownerUser').get('id'),
             'payroll': person.get('customFields', []).get('convenio').get('value')
         }
-
-
-# agendor_api = AgendorAPI()
-# people_data = agendor_api.get_people_stream(since=args.datetime, category=args.category)
-# print(people_data)

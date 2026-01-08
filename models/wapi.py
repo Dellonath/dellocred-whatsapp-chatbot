@@ -206,9 +206,3 @@ class WAPI:
             }
         else:
             raise Exception('Invalid button action type:', button.type)
-
-# chatbot = WAPI(instance_id='', instance_token='')
-# chatbot_phone = '35998723079'
-# chatbot_message = 'Hello, this is a test message from the chatbot.'
-# response = chatbot.check_number_status(chatbot_phone, chatbot_message)
-# print(response.text)
